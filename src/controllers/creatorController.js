@@ -9,7 +9,6 @@ const {
   validatePassword,
 } = require("../utilis/validation");
 
-
 exports.signupCreator = async (req, res) => {
   try {
     const { fullName, email, password, phone } = req.body;
@@ -62,16 +61,23 @@ exports.signupCreator = async (req, res) => {
       });
     }
 
-    //if email exist
-    const existEmail = await Creator.findOne({ email: email });
-
-    if (existEmail) {
-      return res.status(400).json({
-        status: false,
-        message:
-          "This email is already in use. Please provide another email address.",
-      });
-    }
+      // Check if the provided email already exists in the database
+      const existingEmail = await Creator.findOne({ email: email });
+      if (existingEmail) {
+        return res.status(400).json({
+          status: false,
+          message: "This email is already in use. Please provide another email address.",
+        });
+      }
+  
+      // Check if the provided phone number already exists in the database
+      const existingPhone = await Creator.findOne({ phone: phone });
+      if (existingPhone) {
+        return res.status(400).json({
+          status: false,
+          message: "This phone number is already in use. Please provide another phone number.",
+        });
+      }
 
     // Hash the password before storing it in the database
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -82,9 +88,18 @@ exports.signupCreator = async (req, res) => {
       phone,
       password: hashedPassword,
     });
+     // Generate a JWT token upon successful registration
+     const token = jwt.sign(
+      { userId: creator._id, role: "creator" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
     res.status(201).json({
       status: true,
       message: "Creator registered successfully",
+      token,
       data: creator,
     });
   } catch (error) {
@@ -95,19 +110,29 @@ exports.signupCreator = async (req, res) => {
 
 exports.creatorLogin = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { emailorPhone, password } = req.body;
     // Perform validation on the email and password
-    if (!validateEmail(email) || !validatePassword(password)) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Invalid email or password format." });
-    }
+    // if (!validateEmail(email) || !validatePassword(password)) {
+    //   return res
+    //     .status(400)
+    //     .json({ status: false, message: "Invalid email or password format." });
+    // }
 
-    const creator = await Creator.findOne({ email });
+    const creator = await Creator.findOne({
+      $or: [{ email: emailorPhone }, { phone: emailorPhone }],
+    });
     if (!creator) {
       return res
         .status(401)
-        .json({ status: false, message: "Invalid email or password." });
+        .json({ status: false, message: "Invalid email/phone or password." });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, creator.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        status: false,
+        message: "Invalid email/phone or password.",
+      });
     }
 
     const token = jwt.sign(
