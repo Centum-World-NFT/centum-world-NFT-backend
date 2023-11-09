@@ -8,6 +8,8 @@ const {
   validatePhone,
   validatePassword,
 } = require("../utilis/validation");
+
+
 exports.signupCreator = async (req, res) => {
   try {
     const { fullName, email, password, phone } = req.body;
@@ -15,41 +17,41 @@ exports.signupCreator = async (req, res) => {
     if (!fullName) {
       return res
         .status(422)
-        .json({ status: false, message: "Full Name is required" });
+        .json({ status: false, message: "Full Name is required." });
     }
 
     if (!email) {
       return res
         .status(422)
-        .json({ status: false, message: "Email is required" });
+        .json({ status: false, message: "Email is required." });
     }
 
     if (!password) {
       return res
         .status(422)
-        .json({ status: false, message: "Password is required" });
+        .json({ status: false, message: "Password is required." });
     }
 
     if (!phone) {
       return res
         .status(422)
-        .json({ status: false, message: "Phone number is required" });
+        .json({ status: false, message: "Phone number is required." });
     }
 
     //validation
     if (!validateName(fullName)) {
       return res
         .status(422)
-        .json({ status: false, message: "Invalid Full Name" });
+        .json({ status: false, message: "Invalid Full Name." });
     }
     if (!validateEmail(email)) {
-      return res.status(422).json({ status: false, message: "Invalid Email" });
+      return res.status(422).json({ status: false, message: "Invalid Email." });
     }
 
     if (!validatePhone(phone)) {
       return res
         .status(422)
-        .json({ status: false, message: "Invalid Phone number" });
+        .json({ status: false, message: "Invalid Phone number." });
     }
 
     if (!validatePassword(password)) {
@@ -98,12 +100,14 @@ exports.creatorLogin = async (req, res) => {
     if (!validateEmail(email) || !validatePassword(password)) {
       return res
         .status(400)
-        .json({ error: "Invalid email or password format" });
+        .json({ status: false, message: "Invalid email or password format." });
     }
 
     const creator = await Creator.findOne({ email });
     if (!creator) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res
+        .status(401)
+        .json({ status: false, message: "Invalid email or password." });
     }
 
     const token = jwt.sign(
@@ -121,6 +125,6 @@ exports.creatorLogin = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
