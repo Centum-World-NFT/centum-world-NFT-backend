@@ -9,7 +9,7 @@ const {
 } = require("../utilis/validation");
 exports.signupCreator = async (req, res) => {
   try {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, phone } = req.body;
     email;
     if (!fullName) {
       return res
@@ -28,6 +28,13 @@ exports.signupCreator = async (req, res) => {
         .status(422)
         .json({ status: false, message: "Password is required" });
     }
+
+    if (!phone) {
+      return res
+        .status(422)
+        .json({ status: false, message: "Phone number is required" });
+    }
+
 
     //validation
     if (!validateName(fullName)) {
@@ -64,6 +71,7 @@ exports.signupCreator = async (req, res) => {
     const creator = await Creator.create({
       fullName,
       email,
+      phone,
       password: hashedPassword,
     });
     res.status(201).json({
