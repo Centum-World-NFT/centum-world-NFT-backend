@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const {
   validateName,
   validateEmail,
+  validatePhone,
   validatePassword,
 } = require("../utilis/validation");
 exports.signupCreator = async (req, res) => {
@@ -35,7 +36,6 @@ exports.signupCreator = async (req, res) => {
         .json({ status: false, message: "Phone number is required" });
     }
 
-
     //validation
     if (!validateName(fullName)) {
       return res
@@ -44,6 +44,12 @@ exports.signupCreator = async (req, res) => {
     }
     if (!validateEmail(email)) {
       return res.status(422).json({ status: false, message: "Invalid Email" });
+    }
+
+    if (!validatePhone(phone)) {
+      return res
+        .status(422)
+        .json({ status: false, message: "Invalid Phone number" });
     }
 
     if (!validatePassword(password)) {
@@ -82,5 +88,39 @@ exports.signupCreator = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+exports.creatorLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // Perform validation on the email and password
+    if (!validateEmail(email) || !validatePassword(password)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid email or password format" });
+    }
+
+    const creator = await Creator.findOne({ email });
+    if (!creator) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    const token = jwt.sign(
+      { userId: creator._id, role: "creator" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+    return res.status(200).json({
+      status: true,
+      message: "Creator login succesfully",
+      token,
+      data: creator,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 };

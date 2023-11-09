@@ -14,8 +14,15 @@ function validatePassword(password) {
   return passwordRegex.test(password);
 }
 
+function validatePhone(phone) {
+  const phoneRegex = /^[0-9]{10}$/;
+  return phoneRegex.test(phone);
+}
+
+
 module.exports = {
   validateName,
   validateEmail,
   validatePassword,
+  validatePhone
 };
