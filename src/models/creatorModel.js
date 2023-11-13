@@ -1,7 +1,11 @@
 const mongoose = require("mongoose")
 
 const creatorSchema = new mongoose.Schema({
-    fullName: {
+    firstName: {
+        type: String,
+        required: true
+    },
+    surName: {
         type: String,
         required: true
     },

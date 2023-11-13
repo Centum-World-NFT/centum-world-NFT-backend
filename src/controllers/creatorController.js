@@ -11,12 +11,13 @@ const {
 
 exports.signupCreator = async (req, res) => {
   try {
-    const { fullName, email, password, phone } = req.body;
-    email;
-    if (!fullName) {
+    const { firstName,surName, email, password, phone } = req.body;
+    
+
+    if (!firstName || !surName) {
       return res
         .status(422)
-        .json({ status: false, message: "Full Name is required." });
+        .json({ status: false, message: "First Name and sur name both are required." });
     }
 
     if (!email) {
@@ -38,10 +39,15 @@ exports.signupCreator = async (req, res) => {
     }
 
     //validation
-    if (!validateName(fullName)) {
+    if (!validateName(firstName)) {
       return res
         .status(422)
-        .json({ status: false, message: "Invalid Full Name." });
+        .json({ status: false, message: "Invalid First Name." });
+    }
+    if (!validateName(surName)) {
+      return res
+        .status(422)
+        .json({ status: false, message: "Invalid Surname." });
     }
     if (!validateEmail(email)) {
       return res.status(422).json({ status: false, message: "Invalid Email." });
@@ -85,7 +91,8 @@ exports.signupCreator = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const creator = await Creator.create({
-      fullName,
+      firstName,
+      surName,
       email,
       phone,
       password: hashedPassword,
