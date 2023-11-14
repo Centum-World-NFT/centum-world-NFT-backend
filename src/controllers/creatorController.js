@@ -162,4 +162,54 @@ exports.creatorLogin = async (req, res) => {
   }
 };
 
+// Import necessary modules and models
+
+exports.updateCreator = async (req, res) => {
+  try {
+    const { firstName, surName, email, phone,creatorId } = req.body;
+
+    // Check for required fields
+    if (!firstName || !surName || !email || !phone) {
+      return res.status(422).json({ status: false, message: "All fields are required." });
+    }
+
+    // Validate inputs
+    if (!validateName(firstName) || !validateName(surName) || !validateEmail(email) || !validatePhone(phone)) {
+      return res.status(422).json({ status: false, message: "Invalid input values." });
+    }
+
+    // Check if the provided email or phone number already exists in the database (excluding the current creator)
+    const existingEmail = await Creator.findOne({ email, _id: { $ne: creatorId } });
+    const existingPhone = await Creator.findOne({ phone, _id: { $ne: creatorId } });
+
+    if (existingEmail || existingPhone) {
+      return res.status(400).json({
+        status: false,
+        message: "Email or phone number is already in use. Please provide another.",
+      });
+    }
+
+    // Update the creator's information in the database
+    const updatedCreator = await Creator.findByIdAndUpdate(
+      creatorId,
+      { firstName, surName, email, phone },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedCreator) {
+      return res.status(404).json({ status: false, message: "Creator not found." });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "Creator updated successfully",
+      data: updatedCreator,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+
 
