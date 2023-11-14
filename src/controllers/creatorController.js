@@ -8,6 +8,7 @@ const {
   validatePhone,
   validatePassword,
 } = require("../utilis/validation");
+const ProfilePic = require("../models/profileModel");
 
 exports.signupCreator = async (req, res) => {
   try {
@@ -210,6 +211,41 @@ exports.updateCreator = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
+
+exports.uploadProfilePic = async (req, res) => {
+  try {
+    const { creatorId } = req.body;
+
+    const existingCreator = await Creator.findById(creatorId);
+    if (!existingCreator) {
+      return res.status(404).json({ status: false, message: "Creator not found." });
+    }
+
+    if (!req.files["profile_pic"]) {
+      return res.status(400).json({ message: "Profile picture file is missing." });
+    }
+
+    // Get profile picture file location
+    const profilePicFileLocation = req.files["profile_pic"][0].location;
+
+    // Create a new Video instance with the profile picture and creatorId
+    const createdPic = await ProfilePic.create({
+      profile_pic: profilePicFileLocation,
+      creatorId: creatorId,
+    });
+
+    res.status(201).json({
+      status: true,
+      message: "Profile picture uploaded successfully",
+      data: createdPic,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
 
 
 

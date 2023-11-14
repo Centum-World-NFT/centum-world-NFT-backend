@@ -30,9 +30,9 @@ const upload = multer({
     if (
       file.fieldname === "video" ||
       file.fieldname === "thumbnail" ||
-      file.fieldname === "pdf" 
+      file.fieldname === "pdf" ||
+      file.fieldname === "profile_pic" 
     //   file.fieldname === "panCard" ||
-    //   file.fieldname === "profilePhoto" ||
     //   file.fieldname === "adhar_front_side" ||
     //   file.fieldname === "adhar_back_side" ||
     //   file.fieldname === "bond"
