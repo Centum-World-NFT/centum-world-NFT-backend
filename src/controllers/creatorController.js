@@ -247,5 +247,32 @@ exports.uploadProfilePic = async (req, res) => {
 };
 
 
+exports.addBioAboutMe = async (req, res) => {
+  try {
+    const { creatorId, bio } = req.body;
+
+    // Validate if creatorId is provided
+    if (!creatorId) {
+      return res.status(400).json({ status: false, message: "Creator ID is required." });
+    }
+
+    // Validate if the provided creatorId exists in the database
+    const existingCreator = await Creator.findById(creatorId);
+    console.log(existingCreator, 262)
+    if (!existingCreator) {
+      return res.status(404).json({ status: false, message: "Creator not found." });
+    }
+
+    // Update the bio information
+    existingCreator.bio = bio;
+    await existingCreator.save();
+
+    res.status(200).json({ status: true, message: "Bio information updated successfully." });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ status: false, message: "Internal server error." });
+  }
+};
+
 
 
