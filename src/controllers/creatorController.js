@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Creator = require("../models/creatorModel");
+const Subscriber = require('../models/subscriberModel'); 
 const bcrypt = require("bcrypt");
 
 const {
@@ -273,6 +274,32 @@ exports.addBioAboutMe = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error." });
   }
 };
+
+
+
+exports.createSubscriber = async (req, res) => {
+  try {
+    const { firstName, lastName, subscribe, price, joiningDate } = req.body;
+
+    // Assuming you have a Subscriber model/schema
+    const newSubscriber = new Subscriber({
+      firstName,
+      lastName,
+      subscribe,
+      price,
+      joiningDate,
+    });
+
+    // Save the new subscriber to the database
+    const savedSubscriber = await newSubscriber.save();
+
+    res.status(201).json(savedSubscriber);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
 
 

@@ -2,7 +2,7 @@ const Video = require("../models/videoModel");
 
 exports.uploadVideo = async (req, res) => {
   try {
-    const { title, tag, description } = req.body;
+    const { title, description } = req.body;
 
     if (!req.files["video"]) {
       return res.status(400).json({ message: "Video file is missing." });
@@ -28,7 +28,6 @@ exports.uploadVideo = async (req, res) => {
       thumbnail: thumbnailFileLoction,
       title,
       description,
-      tag,
     });
 
     res.status(201).json({
