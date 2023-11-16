@@ -15,8 +15,8 @@ const subscriberSchema = new mongoose.Schema({
     required: true,
   },
   subscribe: {
-    type: Boolean,
-    default: false,
+    type: String,
+    required: true,
   },
   price: {
     type: Number,

@@ -381,3 +381,15 @@ exports.blockAndUnblockSubscriber = async (req, res) => {
   }
 };
 
+exports.fetchSubscriberByFilter = async (req, res) => {
+  try {
+    const { subscribe, block } = req.body;
+
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: 'Internal Server Error' });
+  }
+};
+
+
