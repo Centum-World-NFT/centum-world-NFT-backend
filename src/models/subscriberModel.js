@@ -1,6 +1,11 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const subscriberSchema = new mongoose.Schema({
+  creatorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Creator",
+    required: true,
+  },
   firstName: {
     type: String,
     required: true,
@@ -21,8 +26,12 @@ const subscriberSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  isBlocked: {
+    type: Boolean,
+    default: false
+  }
 });
 
-const Subscriber = mongoose.model('Subscriber', subscriberSchema);
+const Subscriber = mongoose.model("Subscriber", subscriberSchema);
 
 module.exports = Subscriber;

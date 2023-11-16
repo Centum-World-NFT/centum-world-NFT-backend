@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Creator = require("../models/creatorModel");
-const Subscriber = require('../models/subscriberModel'); 
+const Subscriber = require("../models/subscriberModel");
 const bcrypt = require("bcrypt");
 
 const {
@@ -13,13 +13,15 @@ const ProfilePic = require("../models/profileModel");
 
 exports.signupCreator = async (req, res) => {
   try {
-    const { firstName,surName, email, password, phone } = req.body;
-    
+    const { firstName, surName, email, password, phone } = req.body;
 
     if (!firstName || !surName) {
       return res
         .status(422)
-        .json({ status: false, message: "First Name and sur name both are required." });
+        .json({
+          status: false,
+          message: "First Name and sur name both are required.",
+        });
     }
 
     if (!email) {
@@ -168,26 +170,42 @@ exports.creatorLogin = async (req, res) => {
 
 exports.updateCreator = async (req, res) => {
   try {
-    const { firstName, surName, email, phone,creatorId } = req.body;
+    const { firstName, surName, email, phone, creatorId } = req.body;
 
     // Check for required fields
     if (!firstName || !surName || !email || !phone) {
-      return res.status(422).json({ status: false, message: "All fields are required." });
+      return res
+        .status(422)
+        .json({ status: false, message: "All fields are required." });
     }
 
     // Validate inputs
-    if (!validateName(firstName) || !validateName(surName) || !validateEmail(email) || !validatePhone(phone)) {
-      return res.status(422).json({ status: false, message: "Invalid input values." });
+    if (
+      !validateName(firstName) ||
+      !validateName(surName) ||
+      !validateEmail(email) ||
+      !validatePhone(phone)
+    ) {
+      return res
+        .status(422)
+        .json({ status: false, message: "Invalid input values." });
     }
 
     // Check if the provided email or phone number already exists in the database (excluding the current creator)
-    const existingEmail = await Creator.findOne({ email, _id: { $ne: creatorId } });
-    const existingPhone = await Creator.findOne({ phone, _id: { $ne: creatorId } });
+    const existingEmail = await Creator.findOne({
+      email,
+      _id: { $ne: creatorId },
+    });
+    const existingPhone = await Creator.findOne({
+      phone,
+      _id: { $ne: creatorId },
+    });
 
     if (existingEmail || existingPhone) {
       return res.status(400).json({
         status: false,
-        message: "Email or phone number is already in use. Please provide another.",
+        message:
+          "Email or phone number is already in use. Please provide another.",
       });
     }
 
@@ -199,7 +217,9 @@ exports.updateCreator = async (req, res) => {
     );
 
     if (!updatedCreator) {
-      return res.status(404).json({ status: false, message: "Creator not found." });
+      return res
+        .status(404)
+        .json({ status: false, message: "Creator not found." });
     }
 
     res.status(200).json({
@@ -213,18 +233,21 @@ exports.updateCreator = async (req, res) => {
   }
 };
 
-
 exports.uploadProfilePic = async (req, res) => {
   try {
     const { creatorId } = req.body;
 
     const existingCreator = await Creator.findById(creatorId);
     if (!existingCreator) {
-      return res.status(404).json({ status: false, message: "Creator not found." });
+      return res
+        .status(404)
+        .json({ status: false, message: "Creator not found." });
     }
 
     if (!req.files["profile_pic"]) {
-      return res.status(400).json({ message: "Profile picture file is missing." });
+      return res
+        .status(400)
+        .json({ message: "Profile picture file is missing." });
     }
 
     // Get profile picture file location
@@ -247,39 +270,50 @@ exports.uploadProfilePic = async (req, res) => {
   }
 };
 
-
 exports.addBioAboutMe = async (req, res) => {
   try {
     const { creatorId, bio } = req.body;
 
     // Validate if creatorId is provided
     if (!creatorId) {
-      return res.status(400).json({ status: false, message: "Creator ID is required." });
+      return res
+        .status(400)
+        .json({ status: false, message: "Creator ID is required." });
     }
 
     // Validate if the provided creatorId exists in the database
     const existingCreator = await Creator.findById(creatorId);
-    console.log(existingCreator, 262)
+    console.log(existingCreator, 262);
     if (!existingCreator) {
-      return res.status(404).json({ status: false, message: "Creator not found." });
+      return res
+        .status(404)
+        .json({ status: false, message: "Creator not found." });
     }
 
     // Update the bio information
     existingCreator.bio = bio;
     await existingCreator.save();
 
-    res.status(200).json({ status: true, message: "Bio information updated successfully." });
+    res
+      .status(200)
+      .json({ status: true, message: "Bio information updated successfully." });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ status: false, message: "Internal server error." });
   }
 };
 
-
-
 exports.createSubscriber = async (req, res) => {
   try {
-    const { firstName, lastName, subscribe, price, joiningDate } = req.body;
+    const { firstName, lastName, subscribe, price, joiningDate, creatorId } =
+      req.body;
+
+    const existingCreator = await Creator.findById(creatorId);
+    if (!existingCreator) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Creator not found." });
+    }
 
     // Assuming you have a Subscriber model/schema
     const newSubscriber = new Subscriber({
@@ -288,6 +322,7 @@ exports.createSubscriber = async (req, res) => {
       subscribe,
       price,
       joiningDate,
+      creatorId,
     });
 
     // Save the new subscriber to the database
@@ -296,10 +331,53 @@ exports.createSubscriber = async (req, res) => {
     res.status(201).json(savedSubscriber);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
+exports.fetchSubscriber = async (req, res) => {
+  try {
+    const { creatorId } = req.body;
 
+    const existingCreator = await Creator.findById(creatorId);
+    if (!existingCreator) {
+      return res.status(404).json({ status: false, message: "Creator not found." });
+    }
 
+    // Fetch subscribers associated with the specified creatorId
+    const subscribers = await Subscriber.find({ creatorId });
+
+    res.status(200).json({ status: true, data: subscribers });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+exports.blockAndUnblockSubscriber = async (req, res) => {
+  try {
+    const { subscriberId, block } = req.body;
+
+    // Find the subscriber by ID
+    const subscriber = await Subscriber.findById(subscriberId);
+
+    if (!subscriber) {
+      return res.status(404).json({ status: false, message: 'Subscriber not found.' });
+    }
+
+    // Update the 'isBlocked' field based on the 'block' value
+    subscriber.isBlocked = block;
+
+    // Save the updated subscriber
+    const updatedSubscriber = await subscriber.save();
+
+    // Send a response with a customized message
+    const actionMessage = block ? 'Subscriber blocked' : 'Subscriber unblocked';
+
+    res.status(200).json({ status: true, message: actionMessage, data: updatedSubscriber });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: 'Internal Server Error' });
+  }
+};
 
