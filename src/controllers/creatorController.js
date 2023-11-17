@@ -383,7 +383,9 @@ exports.blockAndUnblockSubscriber = async (req, res) => {
 
 exports.fetchSubscriberByFilter = async (req, res) => {
   try {
-    const { subscribe, block } = req.body;
+    const { subscribe } = req.body;
+
+    const subscriber =b
 
 
   } catch (error) {
