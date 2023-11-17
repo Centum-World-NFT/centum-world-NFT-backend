@@ -16,12 +16,10 @@ exports.signupCreator = async (req, res) => {
     const { firstName, surName, email, password, phone } = req.body;
 
     if (!firstName || !surName) {
-      return res
-        .status(422)
-        .json({
-          status: false,
-          message: "First Name and sur name both are required.",
-        });
+      return res.status(422).json({
+        status: false,
+        message: "First Name and sur name both are required.",
+      });
     }
 
     if (!email) {
@@ -341,7 +339,9 @@ exports.fetchSubscriber = async (req, res) => {
 
     const existingCreator = await Creator.findById(creatorId);
     if (!existingCreator) {
-      return res.status(404).json({ status: false, message: "Creator not found." });
+      return res
+        .status(404)
+        .json({ status: false, message: "Creator not found." });
     }
 
     // Fetch subscribers associated with the specified creatorId
@@ -362,7 +362,9 @@ exports.blockAndUnblockSubscriber = async (req, res) => {
     const subscriber = await Subscriber.findById(subscriberId);
 
     if (!subscriber) {
-      return res.status(404).json({ status: false, message: 'Subscriber not found.' });
+      return res
+        .status(404)
+        .json({ status: false, message: "Subscriber not found." });
     }
 
     // Update the 'isBlocked' field based on the 'block' value
@@ -372,12 +374,14 @@ exports.blockAndUnblockSubscriber = async (req, res) => {
     const updatedSubscriber = await subscriber.save();
 
     // Send a response with a customized message
-    const actionMessage = block ? 'Subscriber blocked' : 'Subscriber unblocked';
+    const actionMessage = block ? "Subscriber blocked" : "Subscriber unblocked";
 
-    res.status(200).json({ status: true, message: actionMessage, data: updatedSubscriber });
+    res
+      .status(200)
+      .json({ status: true, message: actionMessage, data: updatedSubscriber });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: false, message: 'Internal Server Error' });
+    res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
 
@@ -385,13 +389,20 @@ exports.fetchSubscriberByFilter = async (req, res) => {
   try {
     const { subscribe } = req.body;
 
-    const subscriber =b
+    const subscriber = await Subscriber.find({ subscribe : subscribe });
+    if(!subscriber){
+      return res.status(404).json({status:false, message: "No subscriber found"})
+    }
 
-
+    return res
+      .status(200)
+      .json({
+        status: true,
+        message: "subscriber fetched successfully",
+        data: subscriber,
+      });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: false, message: 'Internal Server Error' });
+    res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
-
-
