@@ -13,16 +13,17 @@ const videoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // tag: {
-  //   type: String,
-  //   required: true,
-  // },
   pdf: {
     type: String, 
     required: true,
   },
   description: {
     type: String,
+    required: true,
+  },
+  creatorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Creator",
     required: true,
   },
 });

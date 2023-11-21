@@ -2,7 +2,7 @@ const Video = require("../models/videoModel");
 
 exports.uploadVideo = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description , creatorId} = req.body;
 
     if (!req.files["video"]) {
       return res.status(400).json({ message: "Video file is missing." });
@@ -28,6 +28,7 @@ exports.uploadVideo = async (req, res) => {
       thumbnail: thumbnailFileLoction,
       title,
       description,
+      creatorId
     });
 
     res.status(201).json({
@@ -40,6 +41,7 @@ exports.uploadVideo = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
 exports.fetchVideo = async (req, res) => {
   try {
     const {videoId} = req.body;
@@ -58,6 +60,32 @@ exports.fetchVideo = async (req, res) => {
     res.status(200).json({
       status: true,
       data: video,
+    });
+  } catch (error) {
+    // Handle errors and respond with an internal server error message
+    console.error(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+
+
+exports.fetchOneCreatorVideos = async (req, res) => {
+  try {
+    const { id } = req.params; // Change 'creatorId' to 'id'
+
+    // Find the video by ID in the database
+    const videos = await Video.find({creatorId:id}); // Use 'id' instead of 'creatorId'
+
+    // Check if the video with the given ID exists
+    if (!videos) {
+      return res.status(404).json({ status: false, message: "Video not found" });
+    }
+
+    // Respond with the video data
+    res.status(200).json({
+      status: true,
+      data: videos,
     });
   } catch (error) {
     // Handle errors and respond with an internal server error message

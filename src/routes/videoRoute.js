@@ -1,7 +1,7 @@
 const express = require("express");
 const upload = require("../utilis/aws");
 
-const { uploadVideo, fetchVideo } = require("../controllers/videoController");
+const { uploadVideo, fetchVideo, fetchOneCreatorVideos } = require("../controllers/videoController");
 const router = express.Router();
 
 router.post(
@@ -11,5 +11,6 @@ router.post(
 );
 
 router.post("/fetch-video", fetchVideo);
+router.get("/fetch-one-creator-video/:id", fetchOneCreatorVideos);
 
 module.exports = router;
