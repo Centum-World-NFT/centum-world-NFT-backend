@@ -15,7 +15,7 @@ router.post('/create-subscriber', createSubscriber)
 router.post('/fetch-subscriber', fetchSubscriber)
 router.post('/block-and-unblock-subscriber', blockAndUnblockSubscriber)
 router.post('/fetch-subscriber-by-filter', fetchSubscriberByFilter)
-router.get('/fetch-creater-details',fetchCreaterDetails)
+router.post('/fetch-creater-details',fetchCreaterDetails)
 
 
 

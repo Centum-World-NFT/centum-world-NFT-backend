@@ -412,10 +412,10 @@ exports.fetchCreaterDetails = async (req, res) => {
   // const { creatorId } = req.body;
   // console.log(creatorId);
   try {
-    const { creatorId } = req.body;
+    const {creatorId}  = req.body;
     
 
-    const fetchCreator = await Creator.findOne({ _id:creatorId} );
+    const fetchCreator = await Creator.findById(creatorId);
     if (!fetchCreator) {
       return res
         .status(404)
