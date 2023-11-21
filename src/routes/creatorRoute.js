@@ -1,5 +1,5 @@
 const express = require('express');
-const { signupCreator, creatorLogin, updateCreator, uploadProfilePic, addBioAboutMe, createSubscriber, fetchSubscriber, blockAndUnblockSubscriber, fetchSubscriberByFilter } = require('../controllers/creatorController');
+const { signupCreator, creatorLogin, updateCreator, uploadProfilePic, addBioAboutMe, createSubscriber, fetchSubscriber, blockAndUnblockSubscriber, fetchSubscriberByFilter,fetchCreaterDetails } = require('../controllers/creatorController');
 const upload = require('../utilis/aws')
 const router = express.Router();
 
@@ -15,6 +15,7 @@ router.post('/create-subscriber', createSubscriber)
 router.post('/fetch-subscriber', fetchSubscriber)
 router.post('/block-and-unblock-subscriber', blockAndUnblockSubscriber)
 router.post('/fetch-subscriber-by-filter', fetchSubscriberByFilter)
+router.get('/fetch-creater-details',fetchCreaterDetails)
 
 
 
