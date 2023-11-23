@@ -18,8 +18,11 @@ exports.uploadVideo = async (req, res) => {
 
     // Get file locations
     const videoFileLocation = req.files["video"][0].location; // Assuming you are storing file paths or URLs in your model
+    console.log("========>", videoFileLocation);
     const thumbnailFileLoction = req.files["thumbnail"][0].location;
+    console.log("========>", thumbnailFileLoction);
     const pdfFileLocation = req.files["pdf"][0].location;
+    console.log("========>", pdfFileLocation);
 
     // Create a new Video instance with correct values
     const createdVideo = await Video.create({
@@ -44,7 +47,7 @@ exports.uploadVideo = async (req, res) => {
 
 exports.fetchVideo = async (req, res) => {
   try {
-    const {videoId} = req.body;
+    const { videoId } = req.body;
 
     // Find the video by ID in the database
     const video = await Video.findById(videoId);
