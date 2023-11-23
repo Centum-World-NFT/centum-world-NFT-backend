@@ -23,10 +23,10 @@ router.post('/add-bio-about-me',isAuthenticated,authorizeRole(["creator"]), addB
 // create subscribe
 router.post('/create-subscriber',isAuthenticated,authorizeRole(["creator"]), createSubscriber)
 //fetch-subscriber
-router.post('/fetch-subscriber', fetchSubscriber)
-router.post('/block-and-unblock-subscriber', blockAndUnblockSubscriber)
-router.post('/fetch-subscriber-by-filter', fetchSubscriberByFilter)
-router.post('/fetch-creater-details',fetchCreaterDetails)
+router.post('/fetch-subscriber', isAuthenticated,authorizeRole(["creator"]),fetchSubscriber)
+router.post('/block-and-unblock-subscriber', isAuthenticated,authorizeRole(["creator"]),blockAndUnblockSubscriber)
+router.post('/fetch-subscriber-by-filter',isAuthenticated,authorizeRole(["creator"]), fetchSubscriberByFilter)
+router.post('/fetch-creater-details',isAuthenticated,authorizeRole(["creator"]),fetchCreaterDetails)
 
 
 

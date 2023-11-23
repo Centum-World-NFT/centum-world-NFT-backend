@@ -18,7 +18,7 @@ router.post(
 router.post("/fetch-video",isAuthenticated,authorizeRole(["creator"]), fetchVideo);
 
 //fetch one creator video
-router.get("/fetch-one-creator-video",fetchOneCreatorVideos);
+router.get("/fetch-one-creator-video",isAuthenticated,authorizeRole(["creator"]),fetchOneCreatorVideos);
 
 module.exports = router;
 
