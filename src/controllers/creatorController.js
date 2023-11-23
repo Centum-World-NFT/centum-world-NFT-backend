@@ -406,3 +406,25 @@ exports.fetchSubscriberByFilter = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
+
+// fetchCreaterDetails
+exports.fetchCreaterDetails = async (req, res) => {
+  // const { creatorId } = req.body;
+  // console.log(creatorId);
+  try {
+    const {creatorId}  = req.body;
+    
+
+    const fetchCreator = await Creator.findById(creatorId);
+    if (!fetchCreator) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Creator not found." });
+    }
+
+    res.status(200).json({ status: true, data: fetchCreator });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
