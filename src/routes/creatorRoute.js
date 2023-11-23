@@ -1,20 +1,35 @@
 const express = require('express');
 const { signupCreator, creatorLogin, updateCreator, uploadProfilePic, addBioAboutMe, createSubscriber, fetchSubscriber, blockAndUnblockSubscriber, fetchSubscriberByFilter } = require('../controllers/creatorController');
-const upload = require('../utilis/aws')
+const upload = require('../utilis/aws');
+const { isAuthenticated, authorizeRole } = require('../middlewares/auth');
 const router = express.Router();
 
-router.post('/signup-creator', signupCreator);
+
+//signup creator
+router.post('/signup-creator' ,signupCreator);
+
+//login creator
 router.post('/login-creator', creatorLogin)
-router.put('/update-creator', updateCreator)
-router.post('/upload-profile-pic',  upload.fields([{ name: "profile_pic" },]), uploadProfilePic)
 
-router.post('/add-bio-about-me', addBioAboutMe)
+// update creator
+router.put('/update-creator',isAuthenticated,authorizeRole(["creator"]), updateCreator)
 
-router.post('/create-subscriber', createSubscriber)
+//upload profile pic
+router.post('/upload-profile-pic',  upload.fields([{ name: "profile_pic" },]),isAuthenticated,authorizeRole(["creator"]), uploadProfilePic)
+
+//add-bio about me
+router.post('/add-bio-about-me',isAuthenticated,authorizeRole(["creator"]), addBioAboutMe)
+
+// create subscribe
+router.post('/create-subscriber',isAuthenticated,authorizeRole(["creator"]), createSubscriber)
 //fetch-subscriber
-router.post('/fetch-subscriber', fetchSubscriber)
-router.post('/block-and-unblock-subscriber', blockAndUnblockSubscriber)
-router.post('/fetch-subscriber-by-filter', fetchSubscriberByFilter)
+router.post('/fetch-subscriber',isAuthenticated,authorizeRole(["creator"]), fetchSubscriber)
+
+//block and unblock subscriber
+router.post('/block-and-unblock-subscriber',isAuthenticated,authorizeRole(["creator"]), blockAndUnblockSubscriber)
+
+//fetch subscriber by filter
+router.post('/fetch-subscriber-by-filter',isAuthenticated,authorizeRole(["creator"]), fetchSubscriberByFilter)
 
 
 

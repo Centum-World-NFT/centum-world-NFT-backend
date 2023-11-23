@@ -72,7 +72,7 @@ exports.fetchVideo = async (req, res) => {
 
 exports.fetchOneCreatorVideos = async (req, res) => {
   try {
-    const { id } = req.params; // Change 'creatorId' to 'id'
+    const { id } = req.body; // Change 'creatorId' to 'id'
 
     // Find the video by ID in the database
     const videos = await Video.find({creatorId:id}); // Use 'id' instead of 'creatorId'
