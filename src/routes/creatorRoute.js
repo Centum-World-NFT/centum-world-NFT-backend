@@ -1,6 +1,7 @@
 const express = require('express');
 const { signupCreator, creatorLogin, updateCreator, uploadProfilePic, addBioAboutMe, createSubscriber, fetchSubscriber, blockAndUnblockSubscriber, fetchSubscriberByFilter,fetchCreaterDetails } = require('../controllers/creatorController');
-const upload = require('../utilis/aws')
+const upload = require('../utilis/aws');
+const { isAuthenticated, authorizeRole } = require('../middlewares/auth');
 const router = express.Router();
 
 
