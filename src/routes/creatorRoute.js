@@ -1,12 +1,12 @@
 const express = require('express');
-const { signupCreator, creatorLogin, updateCreator, uploadProfilePic, addBioAboutMe, createSubscriber, fetchSubscriber, blockAndUnblockSubscriber, fetchSubscriberByFilter,fetchCreaterDetails } = require('../controllers/creatorController');
+const { signupCreatorAndUser, creatorLogin, updateCreator, uploadProfilePic, addBioAboutMe, createSubscriber, fetchSubscriber, blockAndUnblockSubscriber, fetchSubscriberByFilter,fetchCreaterDetails } = require('../controllers/creatorController');
 const upload = require('../utilis/aws');
 const { isAuthenticated, authorizeRole } = require('../middlewares/auth');
 const router = express.Router();
 
 
 //signup creator
-router.post('/signup-creator' ,signupCreator);
+router.post('/signup-creator-and-user' ,signupCreatorAndUser);
 
 //login creator
 router.post('/login-creator', creatorLogin)

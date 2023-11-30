@@ -11,9 +11,9 @@ const {
 } = require("../utilis/validation");
 const ProfilePic = require("../models/profileModel");
 
-exports.signupCreator = async (req, res) => {
+exports.signupCreatorAndUser = async (req, res) => {
   try {
-    const { firstName, surName, email, password, phone } = req.body;
+    const { firstName, surName, email, password, phone, role } = req.body;
 
     if (!firstName || !surName) {
       return res.status(422).json({
@@ -97,11 +97,12 @@ exports.signupCreator = async (req, res) => {
       surName,
       email,
       phone,
+      role,
       password: hashedPassword,
     });
     // Generate a JWT token upon successful registration
     const token = jwt.sign(
-      { userId: creator._id, role: "creator" },
+      { userId: creator._id },
       process.env.JWT_SECRET,
       {
         expiresIn: "1d",
@@ -146,7 +147,7 @@ exports.creatorLogin = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: creator._id, role: "creator" },
+      { userId: creator._id },
       process.env.JWT_SECRET,
       {
         expiresIn: "1d",

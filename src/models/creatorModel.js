@@ -23,6 +23,12 @@ const creatorSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    required: true,
+    enum: ["creator", "user"],
+  },
+
   bio: {
     type: String,
   },
