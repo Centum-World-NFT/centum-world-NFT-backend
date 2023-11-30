@@ -108,9 +108,15 @@ exports.signupCreatorAndUser = async (req, res) => {
         expiresIn: "1d",
       }
     );
+
+    const successMessage = 
+    role === "creator"? "Creator registered successfully":
+    role === "user"? "User registered successfully": "";
+
+
     res.status(201).json({
       status: true,
-      message: "Creator registered successfully",
+      message:successMessage,
       token,
       data: creator,
     });
@@ -153,9 +159,13 @@ exports.creatorAndUserLogin = async (req, res) => {
         expiresIn: "1d",
       }
     );
+
+    const successMessage = creator.role === "creator"? "Creator login successfully":creator.role === "user"? "User login successfully": ""
+
+
     return res.status(200).json({
       status: true,
-      message: "Creator login succesfully",
+      message: successMessage,
       token,
       data: creator,
     });
