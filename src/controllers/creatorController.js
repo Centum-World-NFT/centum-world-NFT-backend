@@ -120,7 +120,7 @@ exports.signupCreatorAndUser = async (req, res) => {
   }
 };
 
-exports.creatorLogin = async (req, res) => {
+exports.creatorAndUserLogin = async (req, res) => {
   try {
     const { emailorPhone, password } = req.body;
 
