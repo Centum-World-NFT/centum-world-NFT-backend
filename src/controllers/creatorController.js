@@ -75,7 +75,7 @@ exports.signupCreatorAndUser = async (req, res) => {
       return res.status(400).json({
         status: false,
         message:
-          "This email is already in use. Please provide another email address.",
+          "Registration failed. Please provide another set of credentials.",
       });
     }
 
@@ -85,7 +85,7 @@ exports.signupCreatorAndUser = async (req, res) => {
       return res.status(400).json({
         status: false,
         message:
-          "This phone number is already in use. Please provide another phone number.",
+          "Registration failed. Please provide another set of credentials.",
       });
     }
 
@@ -101,22 +101,20 @@ exports.signupCreatorAndUser = async (req, res) => {
       password: hashedPassword,
     });
     // Generate a JWT token upon successful registration
-    const token = jwt.sign(
-      { userId: creator._id },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1d",
-      }
-    );
+    const token = jwt.sign({ userId: creator._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
 
-    const successMessage = 
-    role === "creator"? "Creator registered successfully":
-    role === "user"? "User registered successfully": "";
-
+    const successMessage =
+      role === "creator"
+        ? "Creator registered successfully"
+        : role === "user"
+        ? "User registered successfully"
+        : "";
 
     res.status(201).json({
       status: true,
-      message:successMessage,
+      message: successMessage,
       token,
       data: creator,
     });
@@ -152,16 +150,16 @@ exports.creatorAndUserLogin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { userId: creator._id },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1d",
-      }
-    );
+    const token = jwt.sign({ userId: creator._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
 
-    const successMessage = creator.role === "creator"? "Creator login successfully":creator.role === "user"? "User login successfully": ""
-
+    const successMessage =
+      creator.role === "creator"
+        ? "Creator login successfully"
+        : creator.role === "user"
+        ? "User login successfully"
+        : "";
 
     return res.status(200).json({
       status: true,
@@ -400,18 +398,18 @@ exports.fetchSubscriberByFilter = async (req, res) => {
   try {
     const { subscribe } = req.body;
 
-    const subscriber = await Subscriber.find({ subscribe : subscribe });
-    if(!subscriber){
-      return res.status(404).json({status:false, message: "No subscriber found"})
+    const subscriber = await Subscriber.find({ subscribe: subscribe });
+    if (!subscriber) {
+      return res
+        .status(404)
+        .json({ status: false, message: "No subscriber found" });
     }
 
-    return res
-      .status(200)
-      .json({
-        status: true,
-        message: "subscriber fetched successfully",
-        data: subscriber,
-      });
+    return res.status(200).json({
+      status: true,
+      message: "subscriber fetched successfully",
+      data: subscriber,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: false, message: "Internal Server Error" });
@@ -423,8 +421,7 @@ exports.fetchCreaterDetails = async (req, res) => {
   // const { creatorId } = req.body;
   // console.log(creatorId);
   try {
-    const {creatorId}  = req.body;
-    
+    const { creatorId } = req.body;
 
     const fetchCreator = await Creator.findById(creatorId);
     if (!fetchCreator) {
