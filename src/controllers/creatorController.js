@@ -75,7 +75,7 @@ exports.signupCreatorAndUser = async (req, res) => {
       return res.status(400).json({
         status: false,
         message:
-          "Registration failed. Please provide another set of credentials.",
+          "User already exist.",
       });
     }
 
@@ -85,7 +85,7 @@ exports.signupCreatorAndUser = async (req, res) => {
       return res.status(400).json({
         status: false,
         message:
-          "Registration failed. Please provide another set of credentials.",
+          "User already exist.",
       });
     }
 
