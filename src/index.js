@@ -7,10 +7,11 @@ const cors = require('cors');
 
 
 //routes
-// const userRoutes = require('./routes/userRoutes.js');
-const creatorRoutes = require('./routes/creatorRoute.js')
-const videoRoutes = require('./routes/videoRoute.js')
-const subscriberRoutes = require('./routes/subscriberRoute.js')
+
+const creatorRoute = require('./routes/creatorRoute.js')
+const videoRoute = require('./routes/videoRoute.js')
+const subscriberRoute = require('./routes/subscriberRoute.js')
+const userRoute = require('./routes/userRoute.js')
 
 dotenv.config({ path: './.env' });
 
@@ -28,10 +29,10 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Routes
-// app.use('/api/v1/user', userRoutes);
-app.use('/api/v1/creator', creatorRoutes)
-app.use('/api/v1/video', videoRoutes)
-app.use('/api/v1/subscriber', subscriberRoutes)
+app.use('/api/v1/user', userRoute);
+app.use('/api/v1/creator', creatorRoute)
+app.use('/api/v1/video', videoRoute)
+app.use('/api/v1/subscriber', subscriberRoute)
 
 
 const PORT = process.env.PORT || 5000;

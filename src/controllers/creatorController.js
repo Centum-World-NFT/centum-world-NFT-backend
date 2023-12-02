@@ -75,7 +75,7 @@ exports.signupCreator = async (req, res) => {
       return res.status(400).json({
         status: false,
         message:
-          "User already exist.",
+          "Creator already exist.",
       });
     }
 
@@ -85,7 +85,7 @@ exports.signupCreator = async (req, res) => {
       return res.status(400).json({
         status: false,
         message:
-          "User already exist.",
+          "Creator already exist.",
       });
     }
 
