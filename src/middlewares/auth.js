@@ -20,23 +20,10 @@ exports.isAuthenticated = async (req, res, next) => {
 
     try {
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-      const userId = decodedToken.userId;
+    
+      req.user = decodedToken;
 
-      if (!userId) {
-        return res
-          .status(401)
-          .json({ status: false, message: "Invalid token: userId missing" });
-      }
-
-      const user = await Creator.findById(userId);
-
-      if (!user) {
-        return res
-          .status(401)
-          .json({ status: false, message: "Invalid token: User not found" });
-      }
-
-      req.user = user;
+      console.log(req.user,"26")
       next();
     } catch (error) {
       return res.status(401).json({

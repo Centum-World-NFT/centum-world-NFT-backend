@@ -11,9 +11,9 @@ const {
 } = require("../utilis/validation");
 const ProfilePic = require("../models/profileModel");
 
-exports.signupCreatorAndUser = async (req, res) => {
+exports.signupCreator = async (req, res) => {
   try {
-    const { firstName, surName, email, password, phone, role } = req.body;
+    const { firstName, surName, email, password, phone } = req.body;
 
     if (!firstName || !surName) {
       return res.status(422).json({
@@ -97,24 +97,16 @@ exports.signupCreatorAndUser = async (req, res) => {
       surName,
       email,
       phone,
-      role,
       password: hashedPassword,
     });
     // Generate a JWT token upon successful registration
-    const token = jwt.sign({ userId: creator._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: creator._id , role: "creator"}, process.env.JWT_SECRET, {
       expiresIn: "1d",
-    });
-
-    const successMessage =
-      role === "creator"
-        ? "Creator registered successfully"
-        : role === "user"
-        ? "User registered successfully"
-        : "";
+    });;
 
     res.status(201).json({
       status: true,
-      message: successMessage,
+      message:"Creator registered successfully",
       token,
       data: creator,
     });
@@ -124,7 +116,7 @@ exports.signupCreatorAndUser = async (req, res) => {
   }
 };
 
-exports.creatorAndUserLogin = async (req, res) => {
+exports.creatorLogin = async (req, res) => {
   try {
     const { emailorPhone, password } = req.body;
 
@@ -150,20 +142,13 @@ exports.creatorAndUserLogin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ userId: creator._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: creator._id, role: "creator" }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-
-    const successMessage =
-      creator.role === "creator"
-        ? "Creator login successfully"
-        : creator.role === "user"
-        ? "User login successfully"
-        : "";
-
+      
     return res.status(200).json({
       status: true,
-      message: successMessage,
+      message: "Creator login successfully",
       token,
       data: creator,
     });
@@ -310,111 +295,6 @@ exports.addBioAboutMe = async (req, res) => {
   }
 };
 
-exports.createSubscriber = async (req, res) => {
-  try {
-    const { firstName, lastName, subscribe, price, joiningDate, creatorId } =
-      req.body;
-
-    const existingCreator = await Creator.findById(creatorId);
-    if (!existingCreator) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Creator not found." });
-    }
-
-    // Assuming you have a Subscriber model/schema
-    const newSubscriber = new Subscriber({
-      firstName,
-      lastName,
-      subscribe,
-      price,
-      joiningDate,
-      creatorId,
-    });
-
-    // Save the new subscriber to the database
-    const savedSubscriber = await newSubscriber.save();
-
-    res.status(201).json(savedSubscriber);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-exports.fetchSubscriber = async (req, res) => {
-  try {
-    const { creatorId } = req.body;
-
-    const existingCreator = await Creator.findById(creatorId);
-    if (!existingCreator) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Creator not found." });
-    }
-
-    // Fetch subscribers associated with the specified creatorId
-    const subscribers = await Subscriber.find({ creatorId });
-
-    res.status(200).json({ status: true, data: subscribers });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
-  }
-};
-
-exports.blockAndUnblockSubscriber = async (req, res) => {
-  try {
-    const { subscriberId, block } = req.body;
-
-    // Find the subscriber by ID
-    const subscriber = await Subscriber.findById(subscriberId);
-
-    if (!subscriber) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Subscriber not found." });
-    }
-
-    // Update the 'isBlocked' field based on the 'block' value
-    subscriber.isBlocked = block;
-
-    // Save the updated subscriber
-    const updatedSubscriber = await subscriber.save();
-
-    // Send a response with a customized message
-    const actionMessage = block ? "Subscriber blocked" : "Subscriber unblocked";
-
-    res
-      .status(200)
-      .json({ status: true, message: actionMessage, data: updatedSubscriber });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
-  }
-};
-
-exports.fetchSubscriberByFilter = async (req, res) => {
-  try {
-    const { subscribe } = req.body;
-
-    const subscriber = await Subscriber.find({ subscribe: subscribe });
-    if (!subscriber) {
-      return res
-        .status(404)
-        .json({ status: false, message: "No subscriber found" });
-    }
-
-    return res.status(200).json({
-      status: true,
-      message: "subscriber fetched successfully",
-      data: subscriber,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
-  }
-};
 
 // fetchCreaterDetails
 exports.fetchCreaterDetails = async (req, res) => {
