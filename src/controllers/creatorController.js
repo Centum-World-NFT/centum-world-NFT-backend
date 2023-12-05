@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 const Creator = require("../models/creatorModel");
 const Subscriber = require("../models/subscriberModel");
-const Playlist = require('../models/playlistModel');
-const Video = require('../models/videoModel')
+const Playlist = require("../models/playlistModel");
+const Video = require("../models/videoModel");
 const bcrypt = require("bcrypt");
 
 const {
@@ -324,7 +324,7 @@ exports.fetchCreaterDetails = async (req, res) => {
   }
 };
 
-//  createPlaylist  
+//  createPlaylist
 
 exports.createPlaylist = async (req, res) => {
   try {
@@ -333,10 +333,7 @@ exports.createPlaylist = async (req, res) => {
       playlist_title,
       playlist_description,
       price,
-      playlist_thumbnail,
-      preview_video,
-      selected_video,
-      videos_title
+      videos_title,
     } = req.body;
     if (!req.files["playlist_thumbnail"]) {
       return res
@@ -344,31 +341,31 @@ exports.createPlaylist = async (req, res) => {
         .json({ message: "playlist thumbnail file is missing." });
     }
 
-
-
     if (!req.files["preview_video"]) {
       return res
         .status(400)
         .json({ message: "preview video file is missing." });
     }
 
-    const playlistThumbnailLocation = req.files["playlist_thumbnail"][0].location;
+    const playlistThumbnailLocation =
+      req.files["playlist_thumbnail"][0].location;
     const previewVideoLocation = req.files["preview_video"][0].location;
 
     const fetchSelectedVideo = await Video.find({
       creatorId: creatorId,
-      isSelected:true
-      // Assuming videos_title is an array of video titles
+      isSelected: true,
     });
 
     if (fetchSelectedVideo.length === 0) {
-      return res.status(404).json({ status: false, message: "No videos found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "No videos found" });
     }
 
-    console.log(fetchSelectedVideo, 362)
+    console.log(fetchSelectedVideo, 362);
 
-    if(!fetchSelectedVideo){
-      return res.status(404).json({status:false, message: "No video found"})
+    if (!fetchSelectedVideo) {
+      return res.status(404).json({ status: false, message: "No video found" });
     }
 
     // Create a new playlist using the Playlist model
@@ -377,20 +374,23 @@ exports.createPlaylist = async (req, res) => {
       playlist_title,
       playlist_description,
       price,
-      playlist_thumbnail:playlistThumbnailLocation,
-      preview_video:previewVideoLocation,
-      selected_video:fetchSelectedVideo,
-      videos_title
+      playlist_thumbnail: playlistThumbnailLocation,
+      preview_video: previewVideoLocation,
+      selected_video: fetchSelectedVideo,
+      videos_title,
     });
 
     const savedPlaylist = await newPlaylist.save();
 
-    res.status(201).json(savedPlaylist);
+    res
+      .status(201)
+      .json({
+        status: true,
+        message: "Playlist created successfully",
+        data: savedPlaylist,
+      });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
-
-
-
