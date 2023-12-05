@@ -22,7 +22,7 @@ router.post("/fetch-one-creator-video",isAuthenticated,authorizeRole(["creator"]
 
 //select to video
 
-router.get("/select-video/:id",isAuthenticated,authorizeRole(["creator"]), selectVideo);
+router.post("/select-video",isAuthenticated,authorizeRole(["creator"]), selectVideo);
 
 module.exports = router;
 

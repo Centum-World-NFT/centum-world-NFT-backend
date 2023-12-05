@@ -99,7 +99,7 @@ exports.fetchOneCreatorVideos = async (req, res) => {
 
 exports.selectVideo = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.body;
 
     const videoToSelect = await Video.findOneAndUpdate(
      {_id: id},
