@@ -333,7 +333,6 @@ exports.createPlaylist = async (req, res) => {
       playlist_title,
       playlist_description,
       price,
-      videos_title,
     } = req.body;
     if (!req.files["playlist_thumbnail"]) {
       return res
@@ -377,7 +376,6 @@ exports.createPlaylist = async (req, res) => {
       playlist_thumbnail: playlistThumbnailLocation,
       preview_video: previewVideoLocation,
       selected_video: fetchSelectedVideo,
-      videos_title,
     });
 
     const savedPlaylist = await newPlaylist.save();

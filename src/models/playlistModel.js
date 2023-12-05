@@ -30,10 +30,6 @@ const playlistSchema = new mongoose.Schema({
     type: [String],
     required: true,
   },
-  videos_title: {
-    type: String,
-    required: true,
-  },
 });
 
 const Playlist = mongoose.model("Playlist", playlistSchema);
