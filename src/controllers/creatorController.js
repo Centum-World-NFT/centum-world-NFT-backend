@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const Creator = require("../models/creatorModel");
 const Subscriber = require("../models/subscriberModel");
+const Playlist = require('../models/playlistModel');
+const Video = require('../models/videoModel')
 const bcrypt = require("bcrypt");
 
 const {
@@ -74,8 +76,7 @@ exports.signupCreator = async (req, res) => {
     if (existingEmail) {
       return res.status(400).json({
         status: false,
-        message:
-          "Creator already exist.",
+        message: "Creator already exist.",
       });
     }
 
@@ -84,8 +85,7 @@ exports.signupCreator = async (req, res) => {
     if (existingPhone) {
       return res.status(400).json({
         status: false,
-        message:
-          "Creator already exist.",
+        message: "Creator already exist.",
       });
     }
 
@@ -100,13 +100,17 @@ exports.signupCreator = async (req, res) => {
       password: hashedPassword,
     });
     // Generate a JWT token upon successful registration
-    const token = jwt.sign({ userId: creator._id , role: "creator"}, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });;
+    const token = jwt.sign(
+      { userId: creator._id, role: "creator" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     res.status(201).json({
       status: true,
-      message:"Creator registered successfully",
+      message: "Creator registered successfully",
       token,
       data: creator,
     });
@@ -142,10 +146,14 @@ exports.creatorLogin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ userId: creator._id, role: "creator" }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
-      
+    const token = jwt.sign(
+      { userId: creator._id, role: "creator" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+
     return res.status(200).json({
       status: true,
       message: "Creator login successfully",
@@ -295,7 +303,6 @@ exports.addBioAboutMe = async (req, res) => {
   }
 };
 
-
 // fetchCreaterDetails
 exports.fetchCreaterDetails = async (req, res) => {
   // const { creatorId } = req.body;
@@ -316,3 +323,74 @@ exports.fetchCreaterDetails = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
+
+//  createPlaylist  
+
+exports.createPlaylist = async (req, res) => {
+  try {
+    const {
+      creatorId,
+      playlist_title,
+      playlist_description,
+      price,
+      playlist_thumbnail,
+      preview_video,
+      selected_video,
+      videos_title
+    } = req.body;
+    if (!req.files["playlist_thumbnail"]) {
+      return res
+        .status(400)
+        .json({ message: "playlist thumbnail file is missing." });
+    }
+
+
+
+    if (!req.files["preview_video"]) {
+      return res
+        .status(400)
+        .json({ message: "preview video file is missing." });
+    }
+
+    const playlistThumbnailLocation = req.files["playlist_thumbnail"][0].location;
+    const previewVideoLocation = req.files["preview_video"][0].location;
+
+    const fetchSelectedVideo = await Video.find({
+      creatorId: creatorId,
+      isSelected:true
+      // Assuming videos_title is an array of video titles
+    });
+
+    if (fetchSelectedVideo.length === 0) {
+      return res.status(404).json({ status: false, message: "No videos found" });
+    }
+
+    console.log(fetchSelectedVideo, 362)
+
+    if(!fetchSelectedVideo){
+      return res.status(404).json({status:false, message: "No video found"})
+    }
+
+    // Create a new playlist using the Playlist model
+    let newPlaylist = new Playlist({
+      creatorId,
+      playlist_title,
+      playlist_description,
+      price,
+      playlist_thumbnail:playlistThumbnailLocation,
+      preview_video:previewVideoLocation,
+      selected_video:fetchSelectedVideo,
+      videos_title
+    });
+
+    const savedPlaylist = await newPlaylist.save();
+
+    res.status(201).json(savedPlaylist);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+

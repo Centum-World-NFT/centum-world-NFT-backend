@@ -13,6 +13,10 @@ exports.createSubscriber = async (req, res) => {
           .status(404)
           .json({ status: false, message: "Creator not found." });
       }
+
+      const userId = req.user.userId
+
+      console.log(userId,"userId")
   
       // Assuming you have a Subscriber model/schema
       const newSubscriber = new Subscriber({

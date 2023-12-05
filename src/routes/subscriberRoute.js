@@ -7,7 +7,7 @@ const { isAuthenticated, authorizeRole } = require("../middlewares/auth")
 const router = express.Router();
 
 // create subscribe
-router.post('/create-subscriber',isAuthenticated,authorizeRole(["creator"]), createSubscriber)
+router.post('/create-subscriber',isAuthenticated,authorizeRole(["user"]), createSubscriber)
 //fetch-subscriber
 router.post('/fetch-subscriber', isAuthenticated,authorizeRole(["creator"]),fetchSubscriber)
 router.post('/block-and-unblock-subscriber', isAuthenticated,authorizeRole(["creator"]),blockAndUnblockSubscriber)

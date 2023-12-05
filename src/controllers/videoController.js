@@ -96,3 +96,26 @@ exports.fetchOneCreatorVideos = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
+exports.selectVideo = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const videoToSelect = await Video.findOneAndUpdate(
+     {_id: id},
+      { isSelected: true },
+      { new: true } 
+    );
+
+    if (!videoToSelect) {
+      return res.status(404).json({ status: false, message: "Video not found" });
+    }
+
+    // Respond with the updated video
+    res.status(200).json({ status: true, message: "Video selected", video: videoToSelect });
+  } catch (error) {
+    // Handle errors and send an appropriate response
+    console.error(error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};

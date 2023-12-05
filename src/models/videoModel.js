@@ -26,6 +26,10 @@ const videoSchema = new mongoose.Schema({
     ref: "Creator",
     required: true,
   },
+  isSelected: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const video = mongoose.model('video', videoSchema);
