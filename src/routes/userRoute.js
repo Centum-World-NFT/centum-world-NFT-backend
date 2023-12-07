@@ -16,7 +16,7 @@ router.post('/fetch-all-data-to-dashboard', isAuthenticated,
 authorizeRole(["user"]),FetchAllDataToDashboard);
 
 router.post('/fetch-all-vidhyam-data',isAuthenticated,
-authorizeRole(["creator"]),fetchAllVidhyamData);
+authorizeRole(["user"]),fetchAllVidhyamData);
 
 
 
