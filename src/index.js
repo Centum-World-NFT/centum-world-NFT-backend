@@ -12,6 +12,7 @@ const creatorRoute = require('./routes/creatorRoute.js')
 const videoRoute = require('./routes/videoRoute.js')
 const subscriberRoute = require('./routes/subscriberRoute.js')
 const userRoute = require('./routes/userRoute.js')
+const adminRoute = require('./routes/adminRoute.js')
 
 dotenv.config({ path: './.env' });
 
@@ -33,6 +34,7 @@ app.use('/api/v1/user', userRoute);
 app.use('/api/v1/creator', creatorRoute)
 app.use('/api/v1/video', videoRoute)
 app.use('/api/v1/subscriber', subscriberRoute)
+app.use('/api/v1/admin',adminRoute)
 
 
 const PORT = process.env.PORT || 5000;
