@@ -12,7 +12,8 @@ router.post('/signup-user' ,signupUser);
 //login creator and user
 router.post('/login-user', userLogin);
 
-router.post('/fetch-all-data-to-dashboard',FetchAllDataToDashboard)
+router.post('/fetch-all-data-to-dashboard',isAuthenticated,
+authorizeRole(["user"]),FetchAllDataToDashboard)
 
 
 
