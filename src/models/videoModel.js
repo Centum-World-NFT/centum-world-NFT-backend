@@ -29,6 +29,10 @@ const videoSchema = new mongoose.Schema({
   isSelected: {
     type: Boolean,
     default: false
+  },
+  key:{
+    type:String,
+    required:true,
   }
 });
 

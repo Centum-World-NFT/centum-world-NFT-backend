@@ -3,7 +3,7 @@ const Creator = require("../models/creatorModel");
 const Subscriber = require("../models/subscriberModel");
 const User = require("../models/userModel")
 const bcrypt = require("bcrypt");
-
+const Playlist = require('../models/playlistModel');
 const {
   validateName,
   validateEmail,
@@ -158,3 +158,18 @@ exports.userLogin = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
+// FetchAllDataToDashboard
+exports.FetchAllDataToDashboard = async (req,res) => {
+  try {
+    const allData = await Playlist.find();
+    if (!allData) {
+      res.status(404).json({ message: "no frenchise found" });
+    }
+    res
+      .status(200)
+      .json({ message: "All Data fetched successfully", data: allData });
+  } catch (error) {
+    res.status(500).json({ message: "an erro occured", error: error.message });
+  }
+}

@@ -30,6 +30,10 @@ const playlistSchema = new mongoose.Schema({
     type: [String],
     required: true,
   },
+  key:{
+    type:String,
+    required:true
+  }
 });
 
 const Playlist = mongoose.model("Playlist", playlistSchema);
