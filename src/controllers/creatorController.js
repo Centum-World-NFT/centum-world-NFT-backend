@@ -17,10 +17,16 @@ exports.signupCreator = async (req, res) => {
   try {
     const { firstName, surName, email, password, phone } = req.body;
 
-    if (!firstName || !surName) {
+    if (!firstName) {
       return res.status(422).json({
         status: false,
-        message: "First Name and sur name both are required.",
+        message: "First name is required.",
+      });
+    }
+    if (!surName) {
+      return res.status(422).json({
+        status: false,
+        message: "Sur name is required.",
       });
     }
 

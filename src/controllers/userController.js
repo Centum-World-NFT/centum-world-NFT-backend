@@ -168,8 +168,28 @@ exports.FetchAllDataToDashboard = async (req,res) => {
     }
     res
       .status(200)
-      .json({ message: "All Data fetched successfully", data: allData });
+      .json({ status: true,message: "All Data fetched successfully", data: allData });
   } catch (error) {
-    res.status(500).json({ message: "an erro occured", error: error.message });
+    res.status(500).json({ status: false,message: "an erro occured", error: error.message });
   }
+}
+
+// fetchAllVidhyamData
+exports.fetchAllVidhyamData = async (req,res) => {
+  try {
+    const {key} = req.body;
+    if(!key){
+      return res.status(422).json({status: false,message:"Please provide Type"});
+    }
+    const vidhyamData = await Playlist.find({key:'VIDHYAM'});
+    if (!vidhyamData) {
+      res.status(404).json({status: false, message: "no data found" });
+    }
+    res
+      .status(200)
+      .json({status: true, message: "Vidhyam data fetched successfully", data: vidhyamData });
+  } catch (error) {
+    res.status(500).json({ status: false,message: "an erro occured", error: error.message });
+  }
+
 }

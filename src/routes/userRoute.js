@@ -2,7 +2,7 @@ const express = require('express');
 
 const upload = require('../utilis/aws');
 const { isAuthenticated, authorizeRole } = require('../middlewares/auth');
-const { signupUser, userLogin,FetchAllDataToDashboard } = require('../controllers/userController');
+const { signupUser, userLogin,FetchAllDataToDashboard,fetchAllVidhyamData } = require('../controllers/userController');
 const router = express.Router();
 
 
@@ -12,8 +12,11 @@ router.post('/signup-user' ,signupUser);
 //login creator and user
 router.post('/login-user', userLogin);
 
-router.post('/fetch-all-data-to-dashboard',isAuthenticated,
-authorizeRole(["user"]),FetchAllDataToDashboard)
+router.post('/fetch-all-data-to-dashboard', isAuthenticated,
+authorizeRole(["user"]),FetchAllDataToDashboard);
+
+router.post('/fetch-all-vidhyam-data',isAuthenticated,
+authorizeRole(["user"]),fetchAllVidhyamData);
 
 
 
