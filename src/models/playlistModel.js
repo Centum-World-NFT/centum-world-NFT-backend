@@ -26,7 +26,7 @@ const playlistSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  cource_id: {
+  course_id: {
     type: String,
     required :true,
   }
