@@ -1,8 +1,9 @@
+const Playlist = require("../models/playlistModel");
 const Video = require("../models/videoModel");
 
 exports.uploadVideo = async (req, res) => {
   try {
-    const { title, description , creatorId,key} = req.body;
+    const { title, description , creatorId, key , course_id} = req.body;
 
     if (!req.files["video"]) {
       return res.status(400).json({ message: "Video file is missing." });
@@ -24,6 +25,12 @@ exports.uploadVideo = async (req, res) => {
     const pdfFileLocation = req.files["pdf"][0].location;
     console.log("========>", pdfFileLocation);
 
+    const existingCourseIdInPlaylist = await Playlist.findOne({course_id})
+
+    if(!existingCourseIdInPlaylist){
+      return res.status(400).json({status:false,message: "You are providing wrong course Id"})
+    }
+
     // Create a new Video instance with correct values
     const createdVideo = await Video.create({
       video: videoFileLocation,
@@ -32,7 +39,8 @@ exports.uploadVideo = async (req, res) => {
       title,
       description,
       creatorId,
-      key
+      key,
+      course_id
     });
 
     res.status(201).json({

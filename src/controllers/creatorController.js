@@ -357,22 +357,11 @@ exports.createPlaylist = async (req, res) => {
       req.files["playlist_thumbnail"][0].location;
     const previewVideoLocation = req.files["preview_video"][0].location;
 
-    // const fetchSelectedVideo = await Video.find({
-    //   creatorId: creatorId,
-    //   isSelected: true,
-    // });
+    const existingCourseId = await Playlist.findOne({course_id})
 
-    // if (fetchSelectedVideo.length === 0) {
-    //   return res
-    //     .status(404)
-    //     .json({ status: false, message: "No videos found" });
-    // }
-
-    // console.log(fetchSelectedVideo, 362);
-
-    // if (!fetchSelectedVideo) {
-    //   return res.status(404).json({ status: false, message: "No video found" });
-    // }
+    if(existingCourseId){
+      return res.status(400).json({status: false, message: "Course Id already exist"})
+    }
 
     // Create a new playlist using the Playlist model
     let newPlaylist = new Playlist({
@@ -382,19 +371,16 @@ exports.createPlaylist = async (req, res) => {
       price,
       playlist_thumbnail: playlistThumbnailLocation,
       preview_video: previewVideoLocation,
-      // selected_video: fetchSelectedVideo,
-      course_id
+      course_id,
     });
 
     const savedPlaylist = await newPlaylist.save();
 
-    res
-      .status(201)
-      .json({
-        status: true,
-        message: "Playlist created successfully",
-        data: savedPlaylist,
-      });
+    res.status(201).json({
+      status: true,
+      message: "Playlist created successfully",
+      data: savedPlaylist,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: false, message: "Internal Server Error" });

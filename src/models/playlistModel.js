@@ -29,7 +29,8 @@ const playlistSchema = new mongoose.Schema({
   course_id: {
     type: String,
     required :true,
-  }
+    unique: true,
+  },
   // selected_video: {
   //   type: [String],
   //   required: true,

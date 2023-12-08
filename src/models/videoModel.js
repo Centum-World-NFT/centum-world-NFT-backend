@@ -33,7 +33,11 @@ const videoSchema = new mongoose.Schema({
   key:{
     type:String,
     required:true,
-  }
+  },
+  course_id: {
+    type:String,
+    required: true,
+  },
 });
 
 const video = mongoose.model('video', videoSchema);
