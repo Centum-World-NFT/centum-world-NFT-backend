@@ -30,10 +30,6 @@ const videoSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  key:{
-    type:String,
-    required:true,
-  },
   course_id: {
     type:String,
     required: true,
