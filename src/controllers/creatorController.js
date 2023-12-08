@@ -333,7 +333,7 @@ exports.createPlaylist = async (req, res) => {
       playlist_title,
       playlist_description,
       price,
-      key
+      course_id,
     } = req.body;
     if (!req.files["playlist_thumbnail"]) {
       return res
@@ -351,22 +351,22 @@ exports.createPlaylist = async (req, res) => {
       req.files["playlist_thumbnail"][0].location;
     const previewVideoLocation = req.files["preview_video"][0].location;
 
-    const fetchSelectedVideo = await Video.find({
-      creatorId: creatorId,
-      isSelected: true,
-    });
+    // const fetchSelectedVideo = await Video.find({
+    //   creatorId: creatorId,
+    //   isSelected: true,
+    // });
 
-    if (fetchSelectedVideo.length === 0) {
-      return res
-        .status(404)
-        .json({ status: false, message: "No videos found" });
-    }
+    // if (fetchSelectedVideo.length === 0) {
+    //   return res
+    //     .status(404)
+    //     .json({ status: false, message: "No videos found" });
+    // }
 
-    console.log(fetchSelectedVideo, 362);
+    // console.log(fetchSelectedVideo, 362);
 
-    if (!fetchSelectedVideo) {
-      return res.status(404).json({ status: false, message: "No video found" });
-    }
+    // if (!fetchSelectedVideo) {
+    //   return res.status(404).json({ status: false, message: "No video found" });
+    // }
 
     // Create a new playlist using the Playlist model
     let newPlaylist = new Playlist({
@@ -376,8 +376,8 @@ exports.createPlaylist = async (req, res) => {
       price,
       playlist_thumbnail: playlistThumbnailLocation,
       preview_video: previewVideoLocation,
-      selected_video: fetchSelectedVideo,
-      key,
+      // selected_video: fetchSelectedVideo,
+      course_id
     });
 
     const savedPlaylist = await newPlaylist.save();
