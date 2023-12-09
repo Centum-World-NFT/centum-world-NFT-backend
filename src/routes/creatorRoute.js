@@ -6,7 +6,8 @@ const {
   uploadProfilePic,
   addBioAboutMe,
   fetchCreaterDetails,
-  createPlaylist  
+  createPlaylist,
+  fetchPlaylist,
 } = require("../controllers/creatorController");
 const upload = require("../utilis/aws");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
@@ -50,12 +51,18 @@ router.post(
   fetchCreaterDetails
 );
 
-
 router.post(
-    "/create-playlist",
-    upload.fields([{ name: "preview_video" }, { name: "playlist_thumbnail" }]),
-    isAuthenticated,
-    authorizeRole(["creator"]),
-    createPlaylist
-  );
+  "/create-playlist",
+  upload.fields([{ name: "preview_video" }, { name: "playlist_thumbnail" }]),
+  isAuthenticated,
+  authorizeRole(["creator"]),
+  createPlaylist
+);
+
+router.get(
+  "/fetch-playlists",
+  isAuthenticated,
+  authorizeRole(["user", "creator"]),
+  fetchPlaylist
+);
 module.exports = router;
