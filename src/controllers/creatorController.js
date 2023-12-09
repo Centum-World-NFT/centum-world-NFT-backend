@@ -374,6 +374,8 @@ exports.createPlaylist = async (req, res) => {
       course_id,
     });
 
+    console.log(newPlaylist,377)
+
     const savedPlaylist = await newPlaylist.save();
 
     res.status(201).json({
