@@ -13,6 +13,7 @@ const videoRoute = require('./routes/videoRoute.js')
 const subscriberRoute = require('./routes/subscriberRoute.js')
 const userRoute = require('./routes/userRoute.js')
 const adminRoute = require('./routes/adminRoute.js')
+const paymentRoute = require('./routes/paymentRoute.js');
 
 dotenv.config({ path: './.env' });
 
@@ -35,6 +36,7 @@ app.use('/api/v1/creator', creatorRoute)
 app.use('/api/v1/video', videoRoute)
 app.use('/api/v1/subscriber', subscriberRoute)
 app.use('/api/v1/admin',adminRoute)
+app.use('api/v1/payment', paymentRoute)
 
 
 const PORT = process.env.PORT || 5000;
