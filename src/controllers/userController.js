@@ -4,6 +4,8 @@ const Subscriber = require("../models/subscriberModel");
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const Playlist = require("../models/playlistModel");
+const Video = require("../models/videoModel");
+
 const {
   validateName,
   validateEmail,
@@ -216,7 +218,7 @@ exports.fetchAllVidhyamData = async (req, res) => {
 
 exports.myCourse = async (req, res) => {
   try {
-    const { userId, course_id, description, thumbnail, title, video,price } =
+    const { userId, course_id, description, thumbnail, title, video, price } =
       req.body;
 
     const myCourse = await MyCourse.create({
@@ -230,7 +232,11 @@ exports.myCourse = async (req, res) => {
     });
     return res
       .status(200)
-      .json({ status: true, message: "My course created succcessfully.", data:myCourse});
+      .json({
+        status: true,
+        message: "My course created succcessfully.",
+        data: myCourse,
+      });
   } catch (error) {
     res.status(500).json({
       status: false,
@@ -245,18 +251,41 @@ exports.fetchMyCourse = async (req, res) => {
     const { userId } = req.body;
 
     const myCourses = await MyCourse.find({ userId: userId });
-    return res
-      .status(200)
-      .json({
-        status: true,
-        message: "My course fetched succcessfully.",
-        data: myCourses,
-      });
+    return res.status(200).json({
+      status: true,
+      message: "My course fetched succcessfully.",
+      data: myCourses,
+    });
   } catch (error) {
     res.status(500).json({
       status: false,
       message: "An error occured",
       error: error.message,
     });
+  }
+};
+
+exports.fetchVideos = async (req, res) => {
+  try {
+    const { course_id } = req.body;
+    const videos = await Video.find({ course_id });
+    if (videos.length === 0) {
+      return res
+        .status(404)
+        .json({
+          status: false,
+          message: "No videos found for the specified course_id",
+        });
+    }
+    res
+      .status(200)
+      .json({
+        status: true,
+        message: "videos fetched successfully for specific course id",
+        data: videos,
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };

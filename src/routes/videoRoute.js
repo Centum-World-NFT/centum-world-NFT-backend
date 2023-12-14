@@ -3,6 +3,7 @@ const upload = require("../utilis/aws");
 
 const { uploadVideo, fetchVideo, fetchOneCreatorVideos, selectVideo } = require("../controllers/videoController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
+const { fetchVideos } = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -23,6 +24,12 @@ router.post("/fetch-one-creator-video",isAuthenticated,authorizeRole(["creator"]
 //select to video
 
 router.post("/select-video",isAuthenticated,authorizeRole(["creator"]), selectVideo);
+
+//fetch videos by course id
+
+router.post("/fetch-video-courseid",isAuthenticated,authorizeRole(["user"]), fetchVideos);
+
+
 
 module.exports = router;
 
