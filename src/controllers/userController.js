@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 const Creator = require("../models/creatorModel");
 const Subscriber = require("../models/subscriberModel");
-const User = require("../models/userModel")
+const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
-const Playlist = require('../models/playlistModel');
+const Playlist = require("../models/playlistModel");
 const {
   validateName,
   validateEmail,
@@ -11,6 +11,7 @@ const {
   validatePassword,
 } = require("../utilis/validation");
 const ProfilePic = require("../models/profileModel");
+const MyCourse = require("../models/myCourseModel");
 
 exports.signupUser = async (req, res) => {
   try {
@@ -75,8 +76,7 @@ exports.signupUser = async (req, res) => {
     if (existingEmail) {
       return res.status(400).json({
         status: false,
-        message:
-          "User already exist.",
+        message: "User already exist.",
       });
     }
 
@@ -85,8 +85,7 @@ exports.signupUser = async (req, res) => {
     if (existingPhone) {
       return res.status(400).json({
         status: false,
-        message:
-          "User already exist.",
+        message: "User already exist.",
       });
     }
 
@@ -101,13 +100,17 @@ exports.signupUser = async (req, res) => {
       password: hashedPassword,
     });
     // Generate a JWT token upon successful registration
-    const token = jwt.sign({ userId: creator._id , role: "user"}, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });;
+    const token = jwt.sign(
+      { userId: creator._id, role: "user" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     res.status(201).json({
       status: true,
-      message:"User registered successfully",
+      message: "User registered successfully",
       token,
       data: creator,
     });
@@ -143,10 +146,14 @@ exports.userLogin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ userId: user._id, role: "user" }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
-      
+    const token = jwt.sign(
+      { userId: user._id, role: "user" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+
     return res.status(200).json({
       status: true,
       message: "User login successfully",
@@ -160,36 +167,66 @@ exports.userLogin = async (req, res) => {
 };
 
 // FetchAllDataToDashboard
-exports.FetchAllDataToDashboard = async (req,res) => {
+exports.FetchAllDataToDashboard = async (req, res) => {
   try {
     const allData = await Playlist.find();
     if (!allData) {
       res.status(404).json({ message: "no frenchise found" });
     }
-    res
-      .status(200)
-      .json({ status: true,message: "All Data fetched successfully", data: allData });
+    res.status(200).json({
+      status: true,
+      message: "All Data fetched successfully",
+      data: allData,
+    });
   } catch (error) {
-    res.status(500).json({ status: false,message: "an erro occured", error: error.message });
+    res.status(500).json({
+      status: false,
+      message: "an erro occured",
+      error: error.message,
+    });
   }
-}
+};
 
 // fetchAllVidhyamData
-exports.fetchAllVidhyamData = async (req,res) => {
+exports.fetchAllVidhyamData = async (req, res) => {
   try {
-    const {key} = req.body;
-    if(!key){
-      return res.status(422).json({status: false,message:"Please provide Type"});
+    const { key } = req.body;
+    if (!key) {
+      return res
+        .status(422)
+        .json({ status: false, message: "Please provide Type" });
     }
-    const vidhyamData = await Playlist.find({key:'VIDHYAM'});
+    const vidhyamData = await Playlist.find({ key: "VIDHYAM" });
     if (!vidhyamData) {
-      res.status(404).json({status: false, message: "no data found" });
+      res.status(404).json({ status: false, message: "no data found" });
     }
-    res
-      .status(200)
-      .json({status: true, message: "Vidhyam data fetched successfully", data: vidhyamData });
+    res.status(200).json({
+      status: true,
+      message: "Vidhyam data fetched successfully",
+      data: vidhyamData,
+    });
   } catch (error) {
-    res.status(500).json({ status: false,message: "an erro occured", error: error.message });
+    res.status(500).json({
+      status: false,
+      message: "An error occured",
+      error: error.message,
+    });
   }
+};
 
-}
+exports.myCourse = async (req, res) => {
+  try {
+    const { userId, course_id } = req.body;
+
+    const myCourse = await MyCourse.create({userId,course_id});
+    return res
+      .status(200)
+      .json({ status: true, message: "My course created succcessfully." });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "An error occured",
+      error: error.message,
+    });
+  }
+};

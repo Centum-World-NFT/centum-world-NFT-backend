@@ -2,7 +2,7 @@ const express = require('express');
 
 const upload = require('../utilis/aws');
 const { isAuthenticated, authorizeRole } = require('../middlewares/auth');
-const { signupUser, userLogin,FetchAllDataToDashboard,fetchAllVidhyamData } = require('../controllers/userController');
+const { signupUser, userLogin,FetchAllDataToDashboard,fetchAllVidhyamData , myCourse} = require('../controllers/userController');
 const router = express.Router();
 
 
@@ -18,6 +18,11 @@ authorizeRole(["user"]),FetchAllDataToDashboard);
 router.post('/fetch-all-vidhyam-data',isAuthenticated,
 authorizeRole(["user"]),fetchAllVidhyamData);
 
+// create my course
+
+
+router.post('/my-course',isAuthenticated,
+authorizeRole(["user"]),myCourse);
 
 
 
