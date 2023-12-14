@@ -26,6 +26,10 @@ const myCourseSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  price: {
+    type:String,
+    required: true
+  }
 });
 
 const MyCourse = mongoose.model("MyCourse", myCourseSchema);

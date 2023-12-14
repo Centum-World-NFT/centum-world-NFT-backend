@@ -216,7 +216,7 @@ exports.fetchAllVidhyamData = async (req, res) => {
 
 exports.myCourse = async (req, res) => {
   try {
-    const { userId, course_id, description, thumbnail, title, video } =
+    const { userId, course_id, description, thumbnail, title, video,price } =
       req.body;
 
     const myCourse = await MyCourse.create({
@@ -226,6 +226,7 @@ exports.myCourse = async (req, res) => {
       thumbnail,
       title,
       video,
+      price,
     });
     return res
       .status(200)
