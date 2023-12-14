@@ -230,3 +230,21 @@ exports.myCourse = async (req, res) => {
     });
   }
 };
+
+exports.fetchMyCourse = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const myCourses = await MyCourse.find({userId:userId});
+    return res
+      .status(200)
+      .json({ status: true, message: "My course created succcessfully.", data:myCourses });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "An error occured",
+      error: error.message,
+    });
+  }
+};
+
