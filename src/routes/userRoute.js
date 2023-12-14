@@ -36,6 +36,7 @@ router.post(
 
 router.post("/my-course", isAuthenticated, authorizeRole(["user"]), myCourse);
 
+//fetch my course
 router.post(
   "/fetch-my-course",
   isAuthenticated,

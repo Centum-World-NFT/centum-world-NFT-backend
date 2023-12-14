@@ -216,12 +216,20 @@ exports.fetchAllVidhyamData = async (req, res) => {
 
 exports.myCourse = async (req, res) => {
   try {
-    const { userId, course_id } = req.body;
+    const { userId, course_id, description, thumbnail, title, video } =
+      req.body;
 
-    const myCourse = await MyCourse.create({userId,course_id});
+    const myCourse = await MyCourse.create({
+      userId,
+      course_id,
+      description,
+      thumbnail,
+      title,
+      video,
+    });
     return res
       .status(200)
-      .json({ status: true, message: "My course created succcessfully." });
+      .json({ status: true, message: "My course created succcessfully.", data:myCourse});
   } catch (error) {
     res.status(500).json({
       status: false,
@@ -235,10 +243,14 @@ exports.fetchMyCourse = async (req, res) => {
   try {
     const { userId } = req.body;
 
-    const myCourses = await MyCourse.find({userId:userId});
+    const myCourses = await MyCourse.find({ userId: userId });
     return res
       .status(200)
-      .json({ status: true, message: "My course created succcessfully.", data:myCourses });
+      .json({
+        status: true,
+        message: "My course fetched succcessfully.",
+        data: myCourses,
+      });
   } catch (error) {
     res.status(500).json({
       status: false,
@@ -247,4 +259,3 @@ exports.fetchMyCourse = async (req, res) => {
     });
   }
 };
-
