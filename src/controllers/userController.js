@@ -267,8 +267,8 @@ exports.fetchMyCourse = async (req, res) => {
 
 exports.fetchVideos = async (req, res) => {
   try {
-    const { course_id } = req.body;
-    const videos = await Video.find({ course_id });
+    const { id } = req.body;
+    const videos = await Video.find({ course_id:id });
     if (videos.length === 0) {
       return res
         .status(404)
