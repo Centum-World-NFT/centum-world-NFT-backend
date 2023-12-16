@@ -344,7 +344,7 @@ exports.uploadUserProfilePic = async (req, res) => {
 
     // Check if the user with the given userId exists
     if (!uploadedProfilePic) {
-      return res.status(404).json({status:false, message: 'User not found' });
+      return res.status(404).json({status:false, message: 'User not found' })
     }
 
     // Send a success response with the updated user information
