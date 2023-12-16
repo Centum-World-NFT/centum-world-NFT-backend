@@ -9,6 +9,8 @@ const {
   fetchAllVidhyamData,
   myCourse,
   fetchMyCourse,
+  updateUser,
+  uploadUserProfilePic,
 } = require("../controllers/userController");
 const router = express.Router();
 
@@ -43,5 +45,22 @@ router.post(
   authorizeRole(["user"]),
   fetchMyCourse
 );
+
+//update user
+router.put(
+  "/update-user",
+  isAuthenticated,
+  authorizeRole(["user"]),
+  updateUser
+);
+
+//uplaod profile pic
+
+router.put(
+  "/upload-profile-pic",
+  upload.fields([{ name: "profile_pic" },]),isAuthenticated,authorizeRole(["user"]),
+  uploadUserProfilePic
+);
+
 
 module.exports = router;

@@ -289,3 +289,68 @@ exports.fetchVideos = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+exports.updateUser = async (req, res) => {
+  try {
+    const { firstName, surName, email, phone,userId } = req.body;
+
+    // Build the update object based on provided fields
+    const updateFields = {};
+    if (firstName) {
+      updateFields.firstName = firstName;
+    }
+    if (surName) {
+      updateFields.surName = surName;
+    }
+    if (email) {
+      updateFields.email = email;
+    }
+    if (phone) {
+      updateFields.phone = phone;
+    }
+
+    // Perform the update operation using your database logic
+    const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
+
+    if (!updatedUser) {
+      return res.status(404).json({ status:false,message: 'User not found' });
+    }
+
+    // Send a success response with the updated user information
+    res.json({status:true, message: 'User updated successfully', data: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({status:false, message: 'Internal server error' });
+  }
+};
+
+
+exports.uploadUserProfilePic = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!req.files["profile_pic"]) {
+      return res.status(400).json({ message: "Profile pic file is missing." });
+    }
+
+    const profilePicFileLocation = req.files["profile_pic"][0].location;
+
+    // Assuming you have a User model with a field named 'profile_pic'
+    const uploadedProfilePic = await User.findByIdAndUpdate(
+      userId,
+      { profile_pic: profilePicFileLocation },
+      { new: true }
+    );
+
+    // Check if the user with the given userId exists
+    if (!uploadedProfilePic) {
+      return res.status(404).json({status:false, message: 'User not found' });
+    }
+
+    // Send a success response with the updated user information
+    res.json({status:true, message: 'Profile picture uploaded successfully', data: uploadedProfilePic });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({status:false, message: 'Internal server error' });
+  }
+};
