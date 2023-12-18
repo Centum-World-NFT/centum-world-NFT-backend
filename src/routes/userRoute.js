@@ -67,6 +67,6 @@ router.put(
 
 // get user details
 
-router.get("/get-user", isAuthenticated, authorizeRole(["user"]), getUser);
+router.post("/get-user", isAuthenticated, authorizeRole(["user"]), getUser);
 
 module.exports = router;
