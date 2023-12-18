@@ -230,13 +230,11 @@ exports.myCourse = async (req, res) => {
       video,
       price,
     });
-    return res
-      .status(200)
-      .json({
-        status: true,
-        message: "My course created succcessfully.",
-        data: myCourse,
-      });
+    return res.status(200).json({
+      status: true,
+      message: "My course created succcessfully.",
+      data: myCourse,
+    });
   } catch (error) {
     res.status(500).json({
       status: false,
@@ -268,22 +266,18 @@ exports.fetchMyCourse = async (req, res) => {
 exports.fetchVideos = async (req, res) => {
   try {
     const { id } = req.body;
-    const videos = await Video.find({ course_id:id });
+    const videos = await Video.find({ course_id: id });
     if (videos.length === 0) {
-      return res
-        .status(404)
-        .json({
-          status: false,
-          message: "No videos found for the specified course_id",
-        });
-    }
-    res
-      .status(200)
-      .json({
-        status: true,
-        message: "videos fetched successfully for specific course id",
-        data: videos,
+      return res.status(404).json({
+        status: false,
+        message: "No videos found for the specified course_id",
       });
+    }
+    res.status(200).json({
+      status: true,
+      message: "videos fetched successfully for specific course id",
+      data: videos,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -292,7 +286,7 @@ exports.fetchVideos = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { firstName, surName, email, phone,userId } = req.body;
+    const { firstName, surName, email, phone, userId } = req.body;
 
     // Build the update object based on provided fields
     const updateFields = {};
@@ -310,20 +304,25 @@ exports.updateUser = async (req, res) => {
     }
 
     // Perform the update operation using your database logic
-    const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(userId, updateFields, {
+      new: true,
+    });
 
     if (!updatedUser) {
-      return res.status(404).json({ status:false,message: 'User not found' });
+      return res.status(404).json({ status: false, message: "User not found" });
     }
 
     // Send a success response with the updated user information
-    res.json({status:true, message: 'User updated successfully', data: updatedUser });
+    res.json({
+      status: true,
+      message: "User updated successfully",
+      data: updatedUser,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({status:false, message: 'Internal server error' });
+    res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
-
 
 exports.uploadUserProfilePic = async (req, res) => {
   try {
@@ -344,13 +343,33 @@ exports.uploadUserProfilePic = async (req, res) => {
 
     // Check if the user with the given userId exists
     if (!uploadedProfilePic) {
-      return res.status(404).json({status:false, message: 'User not found' })
+      return res.status(404).json({ status: false, message: "User not found" });
     }
 
     // Send a success response with the updated user information
-    res.json({status:true, message: 'Profile picture uploaded successfully', data: uploadedProfilePic });
+    res.json({
+      status: true,
+      message: "Profile picture uploaded successfully",
+      data: uploadedProfilePic,
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({status:false, message: 'Internal server error' });
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    res.status(200).json({ status: true,message: "User fetched successfully", data: user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };

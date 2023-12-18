@@ -11,6 +11,7 @@ const {
   fetchMyCourse,
   updateUser,
   uploadUserProfilePic,
+  getUser,
 } = require("../controllers/userController");
 const router = express.Router();
 
@@ -58,9 +59,14 @@ router.put(
 
 router.put(
   "/upload-profile-pic",
-  upload.fields([{ name: "profile_pic" },]),isAuthenticated,authorizeRole(["user"]),
+  upload.fields([{ name: "profile_pic" }]),
+  isAuthenticated,
+  authorizeRole(["user"]),
   uploadUserProfilePic
 );
 
+// get user details
+
+router.get("/get-user", isAuthenticated, authorizeRole(["user"]), getUser);
 
 module.exports = router;
