@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const Admin = require('../models/adminModel')
+const Admin = require('../models/adminModel');
+const User = require("../models/userModel");
+const transactionHistory = require('../models/transactionHistoryModel'); // Adjust the path accordingly
 
 exports.adminLogin = async(req,res) => {
     try {
@@ -38,3 +40,35 @@ exports.adminLogin = async(req,res) => {
         console.log(error);
       }
 }
+
+
+//All user count
+
+exports.getAllUsersCount = async (req, res) => {
+  try {
+    const userCount = await User.countDocuments();
+
+    res.status(200).json({
+      status: true,
+      message: "User count retrieved successfully",
+      data: {
+        userCount: userCount,
+      },
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+// totalAmount.controller.js
+exports.getTotalAmount = async (req, res) => {
+  try {
+    const transactions = await transactionHistory.find();
+    const totalAmount = transactions.reduce((acc, transactions) => acc + parseInt(transactions.price), 0);
+    res.status(200).json({ totalAmount });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

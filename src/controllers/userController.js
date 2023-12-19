@@ -14,6 +14,9 @@ const {
 } = require("../utilis/validation");
 const ProfilePic = require("../models/profileModel");
 const MyCourse = require("../models/myCourseModel");
+const PaymentSuccess = require("../models/paymentSuccessModel");
+const paymentCreateDetails = require("../models/paymentCreateDetailsModel");
+const TransactionHistory = require("../models/transactionHistoryModel");
 
 exports.signupUser = async (req, res) => {
   try {
@@ -230,6 +233,23 @@ exports.myCourse = async (req, res) => {
       video,
       price,
     });
+
+    const paymentSuccess = await PaymentSuccess.findOne({ userId });
+    const { orderId, paymentDate } = paymentSuccess;
+
+    const transactionHistory =  new TransactionHistory({
+      userId,
+      courseId: course_id,
+      couseName: title,
+      video,
+      price,
+      transactionDate: paymentDate,
+      orderId,
+    });
+
+    await transactionHistory.save()
+
+
     return res.status(200).json({
       status: true,
       message: "My course created succcessfully.",
@@ -367,7 +387,9 @@ exports.getUser = async (req, res) => {
       return res.status(404).json({ status: false, message: "User not found" });
     }
 
-    res.status(200).json({ status: true,message: "User fetched successfully", data: user });
+    res
+      .status(200)
+      .json({ status: true, message: "User fetched successfully", data: user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: false, message: "Internal Server Error" });
