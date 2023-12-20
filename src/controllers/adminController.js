@@ -66,7 +66,13 @@ exports.getTotalAmount = async (req, res) => {
   try {
     const transactions = await transactionHistory.find();
     const totalAmount = transactions.reduce((acc, transactions) => acc + parseInt(transactions.price), 0);
-    res.status(200).json({ totalAmount });
+    res.status(200).json( {
+      status: true,
+      message: "User total Amount retrieved successfully",
+      data: {
+        totalAmount:totalAmount,
+      },
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Internal server error" });
