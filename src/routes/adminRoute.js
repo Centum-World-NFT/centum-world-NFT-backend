@@ -3,7 +3,10 @@ const express = require("express");
 const {
   adminLogin,
   getAllUsersCount,
-  getTotalAmount
+  getTotalAmount,
+  getAllCreatorCount,
+  getAllSubscriberCount,
+  getAllCreators,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 // const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
@@ -19,6 +22,28 @@ router.get(
   authorizeRole(["admin"]),
   getAllUsersCount
 );
+
+router.get(
+  "/get-creator-count",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  getAllCreatorCount
+);
+router.get(
+  "/get-all-creator",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  getAllCreators
+);
+
+router.get(
+  "/get-subscriber-count",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  getAllSubscriberCount
+);
+
+
 router.get(
   "/get-total-amount",
   isAuthenticated,
