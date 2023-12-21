@@ -7,6 +7,7 @@ const {
   getAllCreatorCount,
   getAllSubscriberCount,
   getAllCreators,
+  getSubscriberDetails,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 // const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
@@ -41,6 +42,13 @@ router.get(
   isAuthenticated,
   authorizeRole(["admin"]),
   getAllSubscriberCount
+);
+
+router.get(
+  "/get-all-subscriber",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  getSubscriberDetails
 );
 
 

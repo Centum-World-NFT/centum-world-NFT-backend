@@ -109,6 +109,32 @@ exports.getAllSubscriberCount = async (req, res) => {
   }
 };
 
+
+//total subscriber details
+exports.getSubscriberDetails = async (req, res) => {
+  try {
+    const uniqueUserIds = await MyCourse.distinct("userId");
+    const userDetails = await User.find({ _id: { $in: uniqueUserIds } });
+    const subscriberDetails = userDetails.map(user => ({
+      userId: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+    }));
+
+    res.status(200).json({
+      status: true,
+      message: "Subscriber details retrieved successfully",
+      subscriberDetails,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+
 // totalAmount.controller.js
 exports.getTotalAmount = async (req, res) => {
   try {

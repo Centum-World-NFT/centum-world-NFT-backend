@@ -27,7 +27,8 @@ const creatorSchema = new mongoose.Schema({
   bio: {
     type: String,
   },
-});
+
+},{timestamps:true});
 
 const Creator = mongoose.model("Creator", creatorSchema);
 module.exports = Creator;
