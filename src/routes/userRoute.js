@@ -13,6 +13,7 @@ const {
   uploadUserProfilePic,
   getUser,
   fetchTransactionHistory,
+  createWishlist,
 } = require("../controllers/userController");
 const router = express.Router();
 
@@ -72,6 +73,11 @@ router.post("/get-user", isAuthenticated, authorizeRole(["user"]), getUser);
 
 //get user transaction history details
 router.get("/fetch-transaction-history", isAuthenticated, authorizeRole(["user"]), fetchTransactionHistory);
+
+//create wishlist
+router.post("/create-wishlist", isAuthenticated, authorizeRole(["user"]), createWishlist);
+
+
 
 
 

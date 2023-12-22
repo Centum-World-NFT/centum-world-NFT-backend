@@ -17,6 +17,7 @@ const MyCourse = require("../models/myCourseModel");
 const PaymentSuccess = require("../models/paymentSuccessModel");
 const paymentCreateDetails = require("../models/paymentCreateDetailsModel");
 const TransactionHistory = require("../models/transactionHistoryModel");
+const Wishlist = require("../models/wishlistModel");
 
 exports.signupUser = async (req, res) => {
   try {
@@ -237,7 +238,7 @@ exports.myCourse = async (req, res) => {
     const paymentSuccess = await PaymentSuccess.findOne({ userId });
     const { orderId, paymentDate } = paymentSuccess;
 
-    const transactionHistory =  new TransactionHistory({
+    const transactionHistory = new TransactionHistory({
       userId,
       courseId: course_id,
       couseName: title,
@@ -247,8 +248,7 @@ exports.myCourse = async (req, res) => {
       orderId,
     });
 
-    await transactionHistory.save()
-
+    await transactionHistory.save();
 
     return res.status(200).json({
       status: true,
@@ -396,7 +396,6 @@ exports.getUser = async (req, res) => {
   }
 };
 
-http://localhost:8000/api/v1/user/fetch-transaction-histor
 exports.fetchTransactionHistory = async (req, res) => {
   try {
     const { userId } = req.user;
@@ -405,18 +404,60 @@ exports.fetchTransactionHistory = async (req, res) => {
 
     // Check if the transaction history is empty
     if (transactionHistory.length === 0) {
-      return res.status(404).json({ status: false, message: "No transaction history found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "No transaction history found" });
     }
 
     // Successfully fetched transaction history
     res.status(200).json({
       status: true,
       message: "Transaction history fetched successfully",
-      data: transactionHistory
+      data: transactionHistory,
     });
-
   } catch (error) {
     console.error(error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+exports.createWishlist = async (req, res) => {
+  try {
+    // Extracting wishlist data from request body
+    const {
+      userId,
+      playlist_title,
+      playlist_description,
+      price,
+      playlist_thumbnail,
+      preview_video,
+      course_id,
+    } = req.body;
+
+    // Create a new wishlist item
+    const newWishlistItem = new Wishlist({
+      userId,
+      playlist_title,
+      playlist_description,
+      price,
+      playlist_thumbnail,
+      preview_video,
+      course_id,
+    });
+
+    // Save the wishlist item to the database
+    await newWishlistItem.save();
+
+    // Send success response
+    res.status(201).json({
+      status: true,
+      message: "Wishlist item created successfully",
+      data: newWishlistItem,
+    });
+  } catch (error) {
+    console.error(error);
+
+    // Send error response
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
