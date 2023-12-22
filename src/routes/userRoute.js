@@ -71,7 +71,7 @@ router.put(
 router.post("/get-user", isAuthenticated, authorizeRole(["user"]), getUser);
 
 //get user transaction history details
-router.get("/fetch-transaction-histor", isAuthenticated, authorizeRole(["user"]), fetchTransactionHistory);
+router.get("/fetch-transaction-history", isAuthenticated, authorizeRole(["user"]), fetchTransactionHistory);
 
 
 

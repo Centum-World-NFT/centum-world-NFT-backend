@@ -395,6 +395,8 @@ exports.getUser = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
+
+http://localhost:8000/api/v1/user/fetch-transaction-histor
 exports.fetchTransactionHistory = async (req, res) => {
   try {
     const { userId } = req.user;
