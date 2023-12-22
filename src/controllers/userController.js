@@ -461,3 +461,27 @@ exports.createWishlist = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
+
+exports.fetchWishlist = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const wishlist = await Wishlist.find({ userId });
+
+    // Check if the wishlsit is empty
+    if (wishlist.length === 0) {
+      return res
+        .status(404)
+        .json({ status: false, message: "No wishlist found" });
+    }
+
+    // Successfully fetched transaction history
+    res.status(200).json({
+      status: true,
+      message: "Wishlist fetched successfully",
+      data: wishlist,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};

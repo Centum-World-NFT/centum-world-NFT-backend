@@ -14,6 +14,7 @@ const {
   getUser,
   fetchTransactionHistory,
   createWishlist,
+  fetchWishlist,
 } = require("../controllers/userController");
 const router = express.Router();
 
@@ -77,6 +78,8 @@ router.get("/fetch-transaction-history", isAuthenticated, authorizeRole(["user"]
 //create wishlist
 router.post("/create-wishlist", isAuthenticated, authorizeRole(["user"]), createWishlist);
 
+//fetch wishlist
+router.get("/fetch-wishlist", isAuthenticated, authorizeRole(["user"]), fetchWishlist);
 
 
 
