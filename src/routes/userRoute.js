@@ -12,6 +12,7 @@ const {
   updateUser,
   uploadUserProfilePic,
   getUser,
+  fetchTransactionHistory,
 } = require("../controllers/userController");
 const router = express.Router();
 
@@ -68,6 +69,9 @@ router.put(
 // get user details
 
 router.post("/get-user", isAuthenticated, authorizeRole(["user"]), getUser);
+
+//get user transaction history details
+router.get("/fetch-transaction-histor", isAuthenticated, authorizeRole(["user"]), fetchTransactionHistory);
 
 
 

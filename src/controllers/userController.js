@@ -395,3 +395,26 @@ exports.getUser = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
+exports.fetchTransactionHistory = async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const transactionHistory = await TransactionHistory.find({ userId });
+
+    // Check if the transaction history is empty
+    if (transactionHistory.length === 0) {
+      return res.status(404).json({ status: false, message: "No transaction history found" });
+    }
+
+    // Successfully fetched transaction history
+    res.status(200).json({
+      status: true,
+      message: "Transaction history fetched successfully",
+      data: transactionHistory
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
