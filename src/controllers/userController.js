@@ -451,7 +451,7 @@ exports.createWishlist = async (req, res) => {
     // Send success response
     res.status(201).json({
       status: true,
-      message: "Wishlist item created successfully",
+      message: "Wishlist item added successfully",
       data: newWishlistItem,
     });
   } catch (error) {
