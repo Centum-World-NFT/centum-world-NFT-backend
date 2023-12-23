@@ -485,3 +485,26 @@ exports.fetchWishlist = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
+
+exports.deleteWishlist = async (req, res) => {
+  try {
+    const { course_id, userId } = req.body;
+
+    const wishlistItem = await Wishlist.findOne({ userId, course_id });
+    if (!wishlistItem) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Wishlist item not found" });
+    }
+
+    await Wishlist.deleteOne({ userId, course_id });
+
+    res.status(200).json({
+      status: true,
+      message: "Wishlist item discarded successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
