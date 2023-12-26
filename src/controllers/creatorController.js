@@ -357,10 +357,12 @@ exports.createPlaylist = async (req, res) => {
       req.files["playlist_thumbnail"][0].location;
     const previewVideoLocation = req.files["preview_video"][0].location;
 
-    const existingCourseId = await Playlist.findOne({course_id})
+    const existingCourseId = await Playlist.findOne({ course_id });
 
-    if(existingCourseId){
-      return res.status(400).json({status: false, message: "Course Id already exist"})
+    if (existingCourseId) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Course Id already exist" });
     }
 
     // Create a new playlist using the Playlist model
@@ -374,7 +376,7 @@ exports.createPlaylist = async (req, res) => {
       course_id,
     });
 
-    console.log(newPlaylist,377)
+    console.log(newPlaylist, 377);
 
     const savedPlaylist = await newPlaylist.save();
 
@@ -389,19 +391,63 @@ exports.createPlaylist = async (req, res) => {
   }
 };
 
-
-
 exports.fetchPlaylist = async (req, res) => {
   try {
     const playlists = await Playlist.find();
 
     if (playlists.length === 0) {
-      return res.status(404).json({ status: false, message: "No playlist found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "No playlist found" });
     }
 
-    return res.status(200).json({ status: true, message: "Playlist fetched successfully", playlists });
+    return res
+      .status(200)
+      .json({
+        status: true,
+        message: "Playlist fetched successfully",
+        playlists,
+      });
   } catch (error) {
     console.error("Error fetching playlist:", error.message);
-    return res.status(500).json({ status: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+//upload profile pic for creator
+
+exports.uploadCreatorProfilePic = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    if (!req.files["profile_pic"]) {
+      return res.status(400).json({ message: "Profile pic file is missing." });
+    }
+    const profilePicFileLocation = req.files["profile_pic"][0].location;
+
+    const uploadedProfilePic = await Creator.findByIdAndUpdate(
+      userId,
+      {
+        profile_pic: profilePicFileLocation,
+      },
+      { new: true }
+    );
+
+    if (!uploadedProfilePic) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Creator not found" });
+    }
+
+    // Send a success response with the updated user information
+    res.json({
+      status: true,
+      message: "Profile picture uploaded successfully",
+      data: uploadedProfilePic,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal server error" });
   }
 };

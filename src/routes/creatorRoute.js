@@ -8,6 +8,7 @@ const {
   fetchCreaterDetails,
   createPlaylist,
   fetchPlaylist,
+  uploadCreatorProfilePic,
 } = require("../controllers/creatorController");
 const upload = require("../utilis/aws");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
@@ -65,4 +66,14 @@ router.get(
   authorizeRole(["user", "creator"]),
   fetchPlaylist
 );
+// uploadCreatorProfilePic
+
+router.put(
+  "/upload-creator-profile-pic",
+  upload.fields([{ name: "profile_pic" }]),
+  isAuthenticated,
+  authorizeRole(["creator"]),
+  uploadCreatorProfilePic
+);
+
 module.exports = router;
