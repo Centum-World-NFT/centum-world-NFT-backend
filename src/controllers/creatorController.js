@@ -440,7 +440,7 @@ exports.uploadCreatorProfilePic = async (req, res) => {
         .json({ status: false, message: "Creator not found" });
     }
 
-    // Send a success response with the updated user information
+    // Send a success response with the updated creator information
     res.json({
       status: true,
       message: "Profile picture uploaded successfully",

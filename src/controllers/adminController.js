@@ -109,13 +109,12 @@ exports.getAllSubscriberCount = async (req, res) => {
   }
 };
 
-
 //total subscriber details
 exports.getSubscriberDetails = async (req, res) => {
   try {
     const uniqueUserIds = await MyCourse.distinct("userId");
     const userDetails = await User.find({ _id: { $in: uniqueUserIds } });
-    const subscriberDetails = userDetails.map(user => ({
+    const subscriberDetails = userDetails.map((user) => ({
       userId: user._id,
       firstName: user.firstName,
       lastName: user.lastName,
@@ -134,7 +133,6 @@ exports.getSubscriberDetails = async (req, res) => {
   }
 };
 
-
 // totalAmount.controller.js
 exports.getTotalAmount = async (req, res) => {
   try {
@@ -150,33 +148,96 @@ exports.getTotalAmount = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
 
-// exports.getEveryMonthRevenue = async(req, res) => {
-//   try {
+//get every month revenue
 
+exports.getEveryMonthRevenue = async (req, res) => {
+  try {
+    const revenuePerMonth = await MyCourse.aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          totalRevenue: { $sum: "$price" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { "_id.year": 1, "_id.month": 1 },
+      },
+    ]);
 
-    
-//   } catch (error) {
-    
-//   }
-// }
+    return res.json({
+      status: true,
+      message: "Every month revenue fetched successfully",
+      data: revenuePerMonth,
+    });
+  } catch (error) {
+    console.error("Error in getEveryMonthRevenue:", error);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+//get every month subscriber
+exports.getEveryMonthPaidUserCount = async (req, res) => {
+  try {
+    const perMonthUserCount = await MyCourse.aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          uniqueUsers: { $addToSet: "$userId" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          year: "$_id.year",
+          month: "$_id.month",
+          userCount: { $size: "$uniqueUsers" },
+        },
+      },
+
+      {
+        $sort: { year: 1, month: 1 },
+      },
+    ]);
+
+    return res.json({
+      status: true,
+      message: "Unique monthly user count fetched successfully",
+      data: perMonthUserCount,
+    });
+  } catch (error) {
+    console.error("Error in getEveryMonthPaidUser:", error);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
 
 //fetch transaction history of all subscribers
 
-exports.fetchTransactionHistoryForAllUsers = async(req, res) => {
+exports.fetchTransactionHistoryForAllUsers = async (req, res) => {
   try {
-    const transactionHistories = await transactionHistory.find()
-    if(transactionHistories.length === 0){
-      return res.status(404).json({status: false, message: "Transaction histories not found"})
+    const transactionHistories = await transactionHistory.find();
+    if (transactionHistories.length === 0) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Transaction histories not found" });
     }
-    return res.status(200).json({status: true, message: "Transaction history fetched successfully", data: transactionHistories})
-    
+    return res.status(200).json({
+      status: true,
+      message: "Transaction history fetched successfully",
+      data: transactionHistories,
+    });
   } catch (error) {
-    console.log(error.message)
-    res.status(500).json({status: false, message: "Internal server error"})
-    
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
   }
-}
+};
