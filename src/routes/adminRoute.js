@@ -8,8 +8,10 @@ const {
   getAllSubscriberCount,
   getAllCreators,
   getSubscriberDetails,
+  fetchTransactionHistoryForAllUsers,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
+const { fetchTransactionHistory } = require("../controllers/userController");
 // const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const router = express.Router();
 
@@ -57,5 +59,13 @@ router.get(
   isAuthenticated,
   authorizeRole(["admin"]),
   getTotalAmount
+);
+// fetch Transaction History For All Users 
+
+router.get(
+  "/fetch-transaction-history-for-all-users",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  fetchTransactionHistoryForAllUsers
 );
 module.exports = router;

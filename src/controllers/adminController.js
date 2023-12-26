@@ -153,3 +153,30 @@ exports.getTotalAmount = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// exports.getEveryMonthRevenue = async(req, res) => {
+//   try {
+
+
+    
+//   } catch (error) {
+    
+//   }
+// }
+
+//fetch transaction history of all subscribers
+
+exports.fetchTransactionHistoryForAllUsers = async(req, res) => {
+  try {
+    const transactionHistories = await transactionHistory.find()
+    if(transactionHistories.length === 0){
+      return res.status(404).json({status: false, message: "Transaction histories not found"})
+    }
+    return res.status(200).json({status: true, message: "Transaction history fetched successfully", data: transactionHistories})
+    
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({status: false, message: "Internal server error"})
+    
+  }
+}

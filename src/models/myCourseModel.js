@@ -29,8 +29,9 @@ const myCourseSchema = new mongoose.Schema({
   price: {
     type:String,
     required: true
-  }
-});
+  },
+
+},{timestamps: true} );
 
 const MyCourse = mongoose.model("MyCourse", myCourseSchema);
 module.exports = MyCourse;
