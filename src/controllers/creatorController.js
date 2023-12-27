@@ -12,6 +12,7 @@ const {
   validatePassword,
 } = require("../utilis/validation");
 const ProfilePic = require("../models/profileModel");
+const MyCourse = require("../models/myCourseModel");
 
 exports.signupCreator = async (req, res) => {
   try {
@@ -448,3 +449,26 @@ exports.uploadCreatorProfilePic = async (req, res) => {
   }
 };
 
+// mySubscriber
+
+exports.fetchMySubscribers = async (req, res) => {
+  try {
+    const { creatorId } = req.body;
+    const subscribers = await MyCourse.find(creatorId);
+    if (subscribers.length === 0) {
+      return res
+        .status(404)
+        .json({ status: false, messgae: "Subscriber not found" });
+    }
+    return res
+      .status(200)
+      .json({
+        status: true,
+        message: "Subscribers fetched successfully",
+        data: subscribers,
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
