@@ -455,7 +455,7 @@ exports.uploadCreatorProfilePic = async (req, res) => {
 exports.fetchMySubscribers = async (req, res) => {
   try {
     const { creatorId } = req.body;
-    const subscribers = await MyCourse.find(creatorId);
+    const subscribers = await MyCourse.find({creatorId});
     if (subscribers.length === 0) {
       return res
         .status(404)
