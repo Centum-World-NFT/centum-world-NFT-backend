@@ -143,7 +143,7 @@ exports.getTotalAmount = async (req, res) => {
     );
     res.status(200).json({
       status: true,
-      message: "User total Amount retrieved successfully",
+      message: "total Amount retrieved successfully",
       totalAmount,
     });
   } catch (error) {
@@ -235,6 +235,23 @@ exports.fetchTransactionHistoryForAllUsers = async (req, res) => {
       status: true,
       message: "Transaction history fetched successfully",
       data: transactionHistories,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+
+// Get all user details
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+
+    res.status(200).json({
+      status: true,
+      message: "All users retrieved successfully",
+      data:users,
     });
   } catch (error) {
     console.log(error.message);
