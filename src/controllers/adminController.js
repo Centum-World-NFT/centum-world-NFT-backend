@@ -143,7 +143,7 @@ exports.getTotalAmount = async (req, res) => {
     );
     res.status(200).json({
       status: true,
-      message: "User total Amount retrieved successfully",
+      message: "total Amount retrieved successfully",
       totalAmount,
     });
   } catch (error) {
