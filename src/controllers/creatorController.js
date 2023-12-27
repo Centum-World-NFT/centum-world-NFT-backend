@@ -203,6 +203,7 @@ exports.updateCreator = async (req, res) => {
       email,
       _id: { $ne: creatorId },
     });
+    
     const existingPhone = await Creator.findOne({
       phone,
       _id: { $ne: creatorId },
@@ -229,7 +230,7 @@ exports.updateCreator = async (req, res) => {
         .json({ status: false, message: "Creator not found." });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       status: true,
       message: "Creator updated successfully",
       data: updatedCreator,
