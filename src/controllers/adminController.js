@@ -241,3 +241,20 @@ exports.fetchTransactionHistoryForAllUsers = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
+
+// Get all user details
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+
+    res.status(200).json({
+      status: true,
+      message: "All users retrieved successfully",
+      data:users,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};

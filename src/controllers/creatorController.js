@@ -311,8 +311,6 @@ exports.addBioAboutMe = async (req, res) => {
 
 // fetchCreaterDetails
 exports.fetchCreaterDetails = async (req, res) => {
-  // const { creatorId } = req.body;
-  // console.log(creatorId);
   try {
     const { creatorId } = req.body;
 
@@ -401,13 +399,11 @@ exports.fetchPlaylist = async (req, res) => {
         .json({ status: false, message: "No playlist found" });
     }
 
-    return res
-      .status(200)
-      .json({
-        status: true,
-        message: "Playlist fetched successfully",
-        playlists,
-      });
+    return res.status(200).json({
+      status: true,
+      message: "Playlist fetched successfully",
+      playlists,
+    });
   } catch (error) {
     console.error("Error fetching playlist:", error.message);
     return res
@@ -451,3 +447,4 @@ exports.uploadCreatorProfilePic = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+

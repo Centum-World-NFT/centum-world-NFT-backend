@@ -11,6 +11,7 @@ const {
   fetchTransactionHistoryForAllUsers,
   getEveryMonthRevenue,
   getEveryMonthPaidUserCount,
+  getAllUsers,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchTransactionHistory } = require("../controllers/userController");
@@ -81,6 +82,16 @@ router.get(
   isAuthenticated,
   authorizeRole(["admin"]),
   getEveryMonthPaidUserCount
+);
+
+
+//getAllUsers
+
+router.get(
+  "/get-all-users",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  getAllUsers
 );
 
 module.exports = router;
