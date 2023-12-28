@@ -242,7 +242,6 @@ exports.fetchTransactionHistoryForAllUsers = async (req, res) => {
   }
 };
 
-
 // Get all user details
 exports.getAllUsers = async (req, res) => {
   try {
@@ -251,7 +250,63 @@ exports.getAllUsers = async (req, res) => {
     res.status(200).json({
       status: true,
       message: "All users retrieved successfully",
-      data:users,
+      data: users,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+exports.blockAndUnblockUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { isBlocked } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isBlocked: isBlocked },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const action = isBlocked ? "blocked" : "unblocked";
+
+    res.status(200).json({
+      status: true,
+      message: `User successfully ${action}`,
+      data: user,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { isDeleted } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isDeleted: isDeleted },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const action = isDeleted ? "deleted" : "recovered";
+
+    res.status(200).json({
+      status: true,
+      message: `User successfully ${action}`,
+      data: user,
     });
   } catch (error) {
     console.log(error.message);
