@@ -393,7 +393,8 @@ exports.createPlaylist = async (req, res) => {
 
 exports.fetchPlaylist = async (req, res) => {
   try {
-    const playlists = await Playlist.find();
+    const {creatorId} = req.body
+    const playlists = await Playlist.find({creatorId});
 
     if (playlists.length === 0) {
       return res

@@ -61,12 +61,13 @@ router.post(
   createPlaylist
 );
 
-router.get(
+router.post(
   "/fetch-playlists",
   isAuthenticated,
-  authorizeRole(["user", "creator"]),
+  authorizeRole([ "creator"]),
   fetchPlaylist
 );
+
 // uploadCreatorProfilePic
 
 router.put(
