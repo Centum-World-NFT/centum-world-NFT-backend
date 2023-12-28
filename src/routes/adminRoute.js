@@ -14,6 +14,7 @@ const {
   getAllUsers,
   blockAndUnblockUser,
   deleteUser,
+  fetchPlaylists,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchTransactionHistory } = require("../controllers/userController");
@@ -108,6 +109,13 @@ router.put(
   isAuthenticated,
   authorizeRole(["admin"]),
   deleteUser
+);
+
+router.get(
+  "/fetch-playlists",
+  isAuthenticated,
+  authorizeRole(["admin", "user"]),
+  fetchPlaylists
 );
 
 module.exports = router;
