@@ -5,6 +5,7 @@ const User = require("../models/userModel");
 const transactionHistory = require("../models/transactionHistoryModel"); // Adjust the path accordingly
 const Creator = require("../models/creatorModel");
 const MyCourse = require("../models/myCourseModel");
+const Playlist = require("../models/playlistModel");
 
 exports.adminLogin = async (req, res) => {
   try {
@@ -242,7 +243,6 @@ exports.fetchTransactionHistoryForAllUsers = async (req, res) => {
   }
 };
 
-
 // Get all user details
 exports.getAllUsers = async (req, res) => {
   try {
@@ -251,7 +251,23 @@ exports.getAllUsers = async (req, res) => {
     res.status(200).json({
       status: true,
       message: "All users retrieved successfully",
-      data:users,
+      data: users,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+//getPlaylist of creator with creator ID
+exports.getPlayListOfCreator = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const playlistDetails = await Playlist.find({creatorId:id});
+    res.status(200).json({
+      status: true,
+      message: "playlist fetched successfully",
+      data: playlistDetails,
     });
   } catch (error) {
     console.log(error.message);

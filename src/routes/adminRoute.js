@@ -12,6 +12,7 @@ const {
   getEveryMonthRevenue,
   getEveryMonthPaidUserCount,
   getAllUsers,
+  getPlayListOfCreator,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchTransactionHistory } = require("../controllers/userController");
@@ -92,6 +93,13 @@ router.get(
   isAuthenticated,
   authorizeRole(["admin"]),
   getAllUsers
+);
+
+router.get(
+  "/get-all-creator-playlist/:id",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  getPlayListOfCreator
 );
 
 module.exports = router;
