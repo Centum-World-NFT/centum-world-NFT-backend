@@ -9,6 +9,7 @@ const {
   createPlaylist,
   fetchPlaylist,
   uploadCreatorProfilePic,
+  fetchMySubscribers,
 } = require("../controllers/creatorController");
 const upload = require("../utilis/aws");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
@@ -60,12 +61,13 @@ router.post(
   createPlaylist
 );
 
-router.get(
+router.post(
   "/fetch-playlists",
   isAuthenticated,
-  authorizeRole(["user", "creator"]),
+  authorizeRole([ "creator"]),
   fetchPlaylist
 );
+
 // uploadCreatorProfilePic
 
 router.put(
@@ -74,6 +76,15 @@ router.put(
   isAuthenticated,
   authorizeRole(["creator"]),
   uploadCreatorProfilePic
+);
+
+//fetch my subscribers
+
+router.post(
+  "/fetch-my-subscribers",
+  isAuthenticated,
+  authorizeRole(["creator"]),
+  fetchMySubscribers
 );
 
 

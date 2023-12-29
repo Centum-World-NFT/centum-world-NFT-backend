@@ -222,11 +222,20 @@ exports.fetchAllVidhyamData = async (req, res) => {
 
 exports.myCourse = async (req, res) => {
   try {
-    const { userId, course_id, description, thumbnail, title, video, price } =
-      req.body;
+    const {
+      userId,
+      creatorId,
+      course_id,
+      description,
+      thumbnail,
+      title,
+      video,
+      price,
+    } = req.body;
 
     const myCourse = await MyCourse.create({
       userId,
+      creatorId,
       course_id,
       description,
       thumbnail,
@@ -508,3 +517,5 @@ exports.deleteWishlist = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
+
+

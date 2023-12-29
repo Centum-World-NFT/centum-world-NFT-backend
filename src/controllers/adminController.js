@@ -118,9 +118,11 @@ exports.getSubscriberDetails = async (req, res) => {
     const subscriberDetails = userDetails.map((user) => ({
       userId: user._id,
       firstName: user.firstName,
-      lastName: user.lastName,
+      lastName: user.surName,
       email: user.email,
       phone: user.phone,
+      isBlocked: user.isBlocked,
+      isDeleted: user.isDeleted
     }));
 
     res.status(200).json({
@@ -251,7 +253,7 @@ exports.getAllUsers = async (req, res) => {
     res.status(200).json({
       status: true,
       message: "All users retrieved successfully",
-      data: users,
+      data:  users,
     });
   } catch (error) {
     console.log(error.message);
@@ -272,5 +274,86 @@ exports.getPlayListOfCreator = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+exports.blockAndUnblockUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { isBlocked } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isBlocked: isBlocked },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const action = isBlocked ? "blocked" : "unblocked";
+
+    res.status(200).json({
+      status: true,
+      message: `User successfully ${action}`,
+      data: user,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { isDeleted } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isDeleted: isDeleted },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const action = isDeleted ? "deleted" : "recovered";
+
+    res.status(200).json({
+      status: true,
+      message: `User successfully ${action}`,
+      data: user,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+
+
+exports.fetchPlaylists = async (req, res) => {
+  try {
+    const playlists = await Playlist.find();
+
+    if (playlists.length === 0) {
+      return res
+        .status(404)
+        .json({ status: false, message: "No playlist found" });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Playlist fetched successfully",
+      playlists,
+    });
+  } catch (error) {
+    console.error("Error fetching playlist:", error.message);
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal Server Error" });
   }
 };
