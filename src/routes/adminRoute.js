@@ -16,6 +16,8 @@ const {
   blockAndUnblockUser,
   deleteUser,
   fetchPlaylists,
+  blockAndUnblockCreator,
+  deleteCreator,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchTransactionHistory } = require("../controllers/userController");
@@ -88,7 +90,6 @@ router.get(
   getEveryMonthPaidUserCount
 );
 
-
 //getAllUsers
 
 router.get(
@@ -110,6 +111,20 @@ router.put(
   isAuthenticated,
   authorizeRole(["admin"]),
   blockAndUnblockUser
+);
+
+router.put(
+  "/block-and-unblock-creator/:creatorId",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  blockAndUnblockCreator
+);
+
+router.put(
+  "/delete-creator/:creatorId",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  deleteCreator
 );
 
 router.put(

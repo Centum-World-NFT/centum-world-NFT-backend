@@ -32,6 +32,14 @@ const creatorSchema = new mongoose.Schema(
     profile_pic: {
       type: String,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

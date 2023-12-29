@@ -122,7 +122,7 @@ exports.getSubscriberDetails = async (req, res) => {
       email: user.email,
       phone: user.phone,
       isBlocked: user.isBlocked,
-      isDeleted: user.isDeleted
+      isDeleted: user.isDeleted,
     }));
 
     res.status(200).json({
@@ -253,7 +253,7 @@ exports.getAllUsers = async (req, res) => {
     res.status(200).json({
       status: true,
       message: "All users retrieved successfully",
-      data:  users,
+      data: users,
     });
   } catch (error) {
     console.log(error.message);
@@ -265,7 +265,7 @@ exports.getAllUsers = async (req, res) => {
 exports.getPlayListOfCreator = async (req, res) => {
   const { id } = req.params;
   try {
-    const playlistDetails = await Playlist.find({creatorId:id});
+    const playlistDetails = await Playlist.find({ creatorId: id });
     res.status(200).json({
       status: true,
       message: "playlist fetched successfully",
@@ -333,8 +333,6 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-
-
 exports.fetchPlaylists = async (req, res) => {
   try {
     const playlists = await Playlist.find();
@@ -355,5 +353,51 @@ exports.fetchPlaylists = async (req, res) => {
     return res
       .status(500)
       .json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+exports.blockAndUnblockCreator = async (req, res) => {
+  try {
+    const { creatorId } = req.params;
+    const { isBlocked } = req.body;
+    const creator = await Creator.findByIdAndUpdate(
+      { _id: creatorId },
+      { isBlocked: isBlocked },
+      { new: true }
+    );
+    if (!creator) {
+      return res.status(404).json({ error: "Creator not found." });
+    }
+    await creator.save();
+    res.status(200).json({
+      message: `creator ${isBlocked ? "blocked" : "unblocked"} successfully`,
+      data: creator,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+};
+
+exports.deleteCreator = async (req, res) => {
+  try {
+    const { creatorId } = req.params;
+    const { isDeleted } = req.body;
+    const creator = await Creator.findByIdAndUpdate(
+      { _id: creatorId },
+      { isDeleted: isDeleted },
+      { new: true }
+    );
+    if (!creator) {
+      res.status(404).json({ message: "creator not found" });
+    }
+
+    const action = isDeleted ? "deleted" : "recovered";
+    res
+      .status(200)
+      .json({ message: `creator successfully ${action}`, data: creator });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
