@@ -368,9 +368,8 @@ exports.blockAndUnblockCreator = async (req, res) => {
     if (!creator) {
       return res.status(404).json({ error: "Creator not found." });
     }
-    await creator.save();
     res.status(200).json({
-      message: `creator ${isBlocked ? "blocked" : "unblocked"} successfully`,
+      message: `Creator successfully ${isBlocked ? "blocked" : "unblocked"} `,
       data: creator,
     });
   } catch (error) {
@@ -395,7 +394,7 @@ exports.deleteCreator = async (req, res) => {
     const action = isDeleted ? "deleted" : "recovered";
     res
       .status(200)
-      .json({ message: `creator successfully ${action}`, data: creator });
+      .json({ message: `Creator successfully ${action}`, data: creator });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ status: false, message: "Internal server error" });
