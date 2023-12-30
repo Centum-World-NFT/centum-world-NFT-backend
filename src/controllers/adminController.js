@@ -400,3 +400,24 @@ exports.deleteCreator = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
+//fetch playlist using subscriber's userId
+exports.fetchSubscriberCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const courses = await MyCourse.find({ userId: id });
+    return res.status(200).json({
+      status: true,
+      message: "Subscriber course fetched succcessfully.",
+      data: courses,
+    });
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).json({
+      status: false,
+      message: "An error occured",
+      error: error.message,
+    });
+  }
+};

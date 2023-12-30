@@ -18,9 +18,11 @@ const {
   fetchPlaylists,
   blockAndUnblockCreator,
   deleteCreator,
+  fetchSubscriberCourse,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchTransactionHistory } = require("../controllers/userController");
+
 // const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const router = express.Router();
 
@@ -140,5 +142,15 @@ router.get(
   authorizeRole(["admin", "user"]),
   fetchPlaylists
 );
+
+
+router.get(
+  "/fetch-subscriber-course/:id",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  fetchSubscriberCourse
+);
+
+
 
 module.exports = router;
