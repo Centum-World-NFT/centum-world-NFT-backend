@@ -421,64 +421,74 @@ exports.fetchSubscriberCourse = async (req, res) => {
     });
   }
 };
-
 exports.everyMonthNumberOfNewUsersAndNewSubscribers = async (req, res) => {
-    try {
-        const aggregationPipeline = [
-            {
-                $project: {
-                    formattedCreatedAt: {
-                        $cond: {
-                            if: { $eq: [{ $type: "$createdAt" }, "date"] },
-                            then: "$createdAt",
-                            else: {
-                                $dateFromString: {
-                                    dateString: "$createdAt"
-                                }
-                            }
-                        }
-                    },
-                    isSubscriber: 1
-                }
+  try {
+    const aggregationPipeline = [
+      {
+        $project: {
+          formattedCreatedAt: {
+            $cond: {
+              if: { $eq: [{ $type: "$createdAt" }, "date"] },
+              then: "$createdAt",
+              else: {
+                $dateFromString: {
+                  dateString: "$createdAt",
+                },
+              },
             },
-            {
-                $project: {
-                    monthYear: {
-                        $dateToString: {
-                            format: "%Y-%m",
-                            date: "$formattedCreatedAt"
-                        }
-                    },
-                    isSubscriber: 1
-                }
-            },
-            {
-                $group: {
-                    _id: "$monthYear",
-                    totalNewUsers: { $sum: 1 },
-                    newSubscribers: {
-                        $sum: { $cond: [{ $eq: ["$isSubscriber", true] }, 1, 0] }
-                    }
-                }
-            },
-            {
-                $sort: { _id: 1 }
+          },
+          isSubscriber: 1,
+        },
+      },
+      {
+        $project: {
+          year: { $year: "$formattedCreatedAt" },
+          month: { $month: "$formattedCreatedAt" },
+          isSubscriber: 1,
+        },
+      },
+      {
+        $group: {
+          _id: { year: "$year", month: "$month" },
+          totalNewUsers: { $sum: 1 },
+          newSubscribers: {
+            $sum: { $cond: [{ $eq: ["$isSubscriber", true] }, 1, 0] },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0, // Exclude _id from the output
+          year: "$_id.year",
+          month: {
+            $cond: {
+              if: { $lt: ["$_id.month", 10] },
+              then: { $concat: ["0", { $toString: "$_id.month" }] },
+              else: { $toString: "$_id.month" }
             }
-        ];
+          },
+          totalNewUsers: 1,
+          newSubscribers: 1,
+        },
+      },
+      {
+        $sort: { year: 1, month: 1 },
+      },
+    ];
 
-        const monthlyStats = await User.aggregate(aggregationPipeline);
+    const monthlyStats = await User.aggregate(aggregationPipeline);
 
-        res.json({
-            status: true,
-            message: "Monthly statistics of new users and new subscribers retrieved successfully.",
-            data: monthlyStats
-        });
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).json({
-            status: false,
-            message: "An error occurred",
-            error: error.message
-        });
-    }
+    res.json({
+      status: true,
+      message: "Monthly statistics of new users and new subscribers retrieved successfully.",
+      data: monthlyStats,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      status: false,
+      message: "An error occurred",
+      error: error.message,
+    });
+  }
 };
