@@ -19,6 +19,7 @@ const {
   blockAndUnblockCreator,
   deleteCreator,
   fetchSubscriberCourse,
+  everyMonthNumberOfNewUsersAndNewSubscribers,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchTransactionHistory } = require("../controllers/userController");
@@ -150,6 +151,13 @@ router.get(
   authorizeRole(["admin"]),
   fetchSubscriberCourse
 );
+
+router.get(
+  "/every-month-number-of-new-users-and-new-subscribers",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  everyMonthNumberOfNewUsersAndNewSubscribers
+)
 
 
 

@@ -35,7 +35,15 @@ const userSchema = new mongoose.Schema(
     isBlocked: {
       type: Boolean,
       default: false
+    },
+    isSubscriber: {
+      type: Boolean,
+      default: false
+    },
+    joinDate: {
+      type: Date,
     }
+    
   },
   { timestamps: true }
 );

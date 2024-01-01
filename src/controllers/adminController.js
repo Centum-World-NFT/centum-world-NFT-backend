@@ -413,11 +413,72 @@ exports.fetchSubscriberCourse = async (req, res) => {
       data: courses,
     });
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
     res.status(500).json({
       status: false,
       message: "An error occured",
       error: error.message,
     });
   }
+};
+
+exports.everyMonthNumberOfNewUsersAndNewSubscribers = async (req, res) => {
+    try {
+        const aggregationPipeline = [
+            {
+                $project: {
+                    formattedCreatedAt: {
+                        $cond: {
+                            if: { $eq: [{ $type: "$createdAt" }, "date"] },
+                            then: "$createdAt",
+                            else: {
+                                $dateFromString: {
+                                    dateString: "$createdAt"
+                                }
+                            }
+                        }
+                    },
+                    isSubscriber: 1
+                }
+            },
+            {
+                $project: {
+                    monthYear: {
+                        $dateToString: {
+                            format: "%Y-%m",
+                            date: "$formattedCreatedAt"
+                        }
+                    },
+                    isSubscriber: 1
+                }
+            },
+            {
+                $group: {
+                    _id: "$monthYear",
+                    totalNewUsers: { $sum: 1 },
+                    newSubscribers: {
+                        $sum: { $cond: [{ $eq: ["$isSubscriber", true] }, 1, 0] }
+                    }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ];
+
+        const monthlyStats = await User.aggregate(aggregationPipeline);
+
+        res.json({
+            status: true,
+            message: "Monthly statistics of new users and new subscribers retrieved successfully.",
+            data: monthlyStats
+        });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({
+            status: false,
+            message: "An error occurred",
+            error: error.message
+        });
+    }
 };

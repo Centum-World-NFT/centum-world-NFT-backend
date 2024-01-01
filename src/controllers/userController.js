@@ -258,6 +258,12 @@ exports.myCourse = async (req, res) => {
     });
 
     await transactionHistory.save();
+    console.log(userId, "ujijdsi");
+
+    await User.updateOne(
+      { _id: userId },
+      { $set: { isSubscriber: true, joinDate: Date.now() } }
+    );
 
     return res.status(200).json({
       status: true,
@@ -517,5 +523,3 @@ exports.deleteWishlist = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
-
-
