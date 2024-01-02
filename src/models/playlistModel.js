@@ -31,15 +31,8 @@ const playlistSchema = new mongoose.Schema({
     required :true,
     unique: true,
   },
-  // selected_video: {
-  //   type: [String],
-  //   required: true,
-  // },
-  // key:{
-  //   type:String,
-  //   required:true
-  // }
-});
+
+},{timestamps:true});
 
 const Playlist = mongoose.model("Playlist", playlistSchema);
 

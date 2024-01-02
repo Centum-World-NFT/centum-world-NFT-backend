@@ -27,7 +27,7 @@ router.post("/select-video",isAuthenticated,authorizeRole(["creator"]), selectVi
 
 //fetch videos by course id
 
-router.post("/fetch-video-courseid",isAuthenticated,authorizeRole(["user"]), fetchVideos);
+router.post("/fetch-video-courseid",isAuthenticated,authorizeRole(["user", "admin"]), fetchVideos);
 
 
 

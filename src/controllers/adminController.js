@@ -6,6 +6,7 @@ const transactionHistory = require("../models/transactionHistoryModel"); // Adju
 const Creator = require("../models/creatorModel");
 const MyCourse = require("../models/myCourseModel");
 const Playlist = require("../models/playlistModel");
+const Video = require("../models/videoModel");
 
 exports.adminLogin = async (req, res) => {
   try {
@@ -492,3 +493,25 @@ exports.everyMonthNumberOfNewUsersAndNewSubscribers = async (req, res) => {
     });
   }
 };
+
+exports.fetchVideosByCourseId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const videos = await Video.find({ course_id: id });
+    if (videos.length === 0) {
+      return res.status(404).json({
+        status: false,
+        message: "No videos found for the specified course_id",
+      });
+    }
+    res.status(200).json({
+      status: true,
+      message: "videos fetched successfully for specific course id",
+      data: videos,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+

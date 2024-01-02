@@ -20,6 +20,7 @@ const {
   deleteCreator,
   fetchSubscriberCourse,
   everyMonthNumberOfNewUsersAndNewSubscribers,
+  fetchVideosByCourseId,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchTransactionHistory } = require("../controllers/userController");
@@ -157,6 +158,13 @@ router.get(
   isAuthenticated,
   authorizeRole(["admin"]),
   everyMonthNumberOfNewUsersAndNewSubscribers
+)
+
+router.get(
+  "/fetch-videos-by-course-id/:id",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  fetchVideosByCourseId
 )
 
 
