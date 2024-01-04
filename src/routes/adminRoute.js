@@ -163,7 +163,7 @@ router.get(
 router.get(
   "/fetch-videos-by-course-id/:id",
   isAuthenticated,
-  authorizeRole(["admin"]),
+  authorizeRole(["admin", "creator"]),
   fetchVideosByCourseId
 )
 
