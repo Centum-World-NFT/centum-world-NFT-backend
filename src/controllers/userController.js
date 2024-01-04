@@ -126,6 +126,69 @@ exports.signupUser = async (req, res) => {
   }
 };
 
+
+exports.googleAuth = async (req, res) => {
+  try {
+    const { displayName, email, photoURL } = req.body;
+
+    // Split display name into first name and last name
+    const [firstName, ...surNameArray] = displayName.split(" ");
+    const surName = surNameArray.join(" ");
+
+    // Check if the provided email already exists in the database
+    const existingUser = await User.findOne({ email: email });
+    if (existingUser) {
+      const token = jwt.sign(
+        { userId: existingUser._id, role: "user" },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1d",
+        }
+      );
+
+      return res.status(200).json({
+        status: true,
+        message: "User logged in successfully",
+        token,
+        data: existingUser,
+      });
+    }
+
+    // User doesn't exist, create a new user
+    const newUser = await User.create({
+      firstName,
+      surName,
+      email,
+      // Set default or placeholder values for phone and password
+      phone: "",
+      password: "",
+      // Set profile picture value
+      profile_pic: photoURL || "", // Use the provided URL or set a default value
+    });
+
+    const token = jwt.sign(
+      { userId: newUser._id, role: "user" },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    res.status(201).json({
+      status: true,
+      message: "User registered successfully",
+      token,
+      data: newUser,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+
+
+
 exports.userLogin = async (req, res) => {
   try {
     const { emailorPhone, password } = req.body;

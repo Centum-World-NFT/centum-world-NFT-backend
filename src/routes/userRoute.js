@@ -16,12 +16,13 @@ const {
   createWishlist,
   fetchWishlist,
   deleteWishlist,
+  googleAuth,
 } = require("../controllers/userController");
 const router = express.Router();
 
 //signup creator and user
 router.post("/signup-user", signupUser);
-
+router.post("/google-auth", googleAuth);
 //login creator and user
 router.post("/login-user", userLogin);
 

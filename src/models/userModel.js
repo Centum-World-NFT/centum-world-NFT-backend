@@ -1,3 +1,5 @@
+// user.js (model)
+
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
@@ -17,33 +19,31 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: true,
-      unique: true,
+      default: "", // Set a default or placeholder value
     },
     password: {
       type: String,
-      required: true,
+      default: "", // Set a default or placeholder value
     },
     profile_pic: {
       type: String,
-      // required: true,
+      default: "", // Set a default or placeholder value
     },
     isDeleted: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isBlocked: {
       type: Boolean,
-      default: false
+      default: false,
     },
     isSubscriber: {
       type: Boolean,
-      default: false
+      default: false,
     },
     joinDate: {
       type: Date,
-    }
-    
+    },
   },
   { timestamps: true }
 );
