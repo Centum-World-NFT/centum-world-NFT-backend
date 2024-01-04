@@ -124,6 +124,7 @@ exports.getSubscriberDetails = async (req, res) => {
       phone: user.phone,
       isBlocked: user.isBlocked,
       isDeleted: user.isDeleted,
+      profile_pic: user.profile_pic
     }));
 
     res.status(200).json({
