@@ -7,9 +7,10 @@ const {
   addBioAboutMe,
   fetchCreaterDetails,
   createPlaylist,
-  fetchPlaylist,
+  fetchPlaylistOfCreator,
   uploadCreatorProfilePic,
   fetchMySubscribers,
+  fetchPlaylist,
 } = require("../controllers/creatorController");
 const upload = require("../utilis/aws");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
@@ -65,7 +66,7 @@ router.post(
   "/fetch-playlists",
   isAuthenticated,
   authorizeRole([ "creator"]),
-  fetchPlaylist
+  fetchPlaylistOfCreator
 );
 
 // uploadCreatorProfilePic
@@ -87,5 +88,12 @@ router.post(
   fetchMySubscribers
 );
 
+//fetch specific playlist
+router.get(
+  "/fetch-playlist/:id",
+  isAuthenticated,
+  authorizeRole(["creator"]),
+  fetchPlaylist
+);
 
 module.exports = router;

@@ -391,7 +391,7 @@ exports.createPlaylist = async (req, res) => {
   }
 };
 
-exports.fetchPlaylist = async (req, res) => {
+exports.fetchPlaylistOfCreator = async (req, res) => {
   try {
     const {creatorId} = req.body
     const playlists = await Playlist.find({creatorId});
@@ -474,5 +474,24 @@ exports.fetchMySubscribers = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
+exports.fetchPlaylist = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const playlist = await Playlist.findById(id);
+    if (!playlist) {
+      return res.status(404).json({ status: false, message: "Playlist not found" });
+    }
+    return res.status(200).json({
+      status: true,
+      message: "Playlist fetched successfully",
+      data: playlist,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
 
 

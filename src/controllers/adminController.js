@@ -465,8 +465,8 @@ exports.everyMonthNumberOfNewUsersAndNewSubscribers = async (req, res) => {
             $cond: {
               if: { $lt: ["$_id.month", 10] },
               then: { $concat: ["0", { $toString: "$_id.month" }] },
-              else: { $toString: "$_id.month" }
-            }
+              else: { $toString: "$_id.month" },
+            },
           },
           totalNewUsers: 1,
           newSubscribers: 1,
@@ -481,7 +481,8 @@ exports.everyMonthNumberOfNewUsersAndNewSubscribers = async (req, res) => {
 
     res.json({
       status: true,
-      message: "Monthly statistics of new users and new subscribers retrieved successfully.",
+      message:
+        "Monthly statistics of new users and new subscribers retrieved successfully.",
       data: monthlyStats,
     });
   } catch (error) {
@@ -515,3 +516,29 @@ exports.fetchVideosByCourseId = async (req, res) => {
   }
 };
 
+// exports.fetchProfilePic = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+
+//     const user = await User.findById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({ status: false, message: "User not found" });
+//     }
+
+//     if (!user.profile_pic) {
+//       return res
+//         .status(404)
+//         .json({ status: false, message: "Profile picture not found" });
+//     }
+
+//     return res.json({
+//       status: true,
+//       message: "Profile picture fetched successfully",
+//       profilePicUrl: user.profile_pic,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ status: false, message: "Internal server error" });
+//   }
+// };
