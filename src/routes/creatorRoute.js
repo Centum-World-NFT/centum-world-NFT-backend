@@ -11,6 +11,7 @@ const {
   uploadCreatorProfilePic,
   fetchMySubscribers,
   fetchPlaylist,
+  updatePlaylist,
 } = require("../controllers/creatorController");
 const upload = require("../utilis/aws");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
@@ -94,6 +95,14 @@ router.get(
   isAuthenticated,
   authorizeRole(["creator"]),
   fetchPlaylist
+);
+//update specific playlist
+router.put(
+  "/update-playlist/:id",
+  upload.fields([{ name: "preview_video" }, { name: "playlist_thumbnail" }]),
+  isAuthenticated,
+  authorizeRole(["creator"]),
+  updatePlaylist
 );
 
 module.exports = router;

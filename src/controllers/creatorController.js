@@ -203,7 +203,7 @@ exports.updateCreator = async (req, res) => {
       email,
       _id: { $ne: creatorId },
     });
-    
+
     const existingPhone = await Creator.findOne({
       phone,
       _id: { $ne: creatorId },
@@ -393,8 +393,8 @@ exports.createPlaylist = async (req, res) => {
 
 exports.fetchPlaylistOfCreator = async (req, res) => {
   try {
-    const {creatorId} = req.body
-    const playlists = await Playlist.find({creatorId});
+    const { creatorId } = req.body;
+    const playlists = await Playlist.find({ creatorId });
 
     if (playlists.length === 0) {
       return res
@@ -456,19 +456,17 @@ exports.uploadCreatorProfilePic = async (req, res) => {
 exports.fetchMySubscribers = async (req, res) => {
   try {
     const { creatorId } = req.body;
-    const subscribers = await MyCourse.find({creatorId});
+    const subscribers = await MyCourse.find({ creatorId });
     if (subscribers.length === 0) {
       return res
         .status(404)
         .json({ status: false, messgae: "Subscriber not found" });
     }
-    return res
-      .status(200)
-      .json({
-        status: true,
-        message: "Subscribers fetched successfully",
-        data: subscribers,
-      });
+    return res.status(200).json({
+      status: true,
+      message: "Subscribers fetched successfully",
+      data: subscribers,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: false, message: "Internal server error" });
@@ -480,7 +478,9 @@ exports.fetchPlaylist = async (req, res) => {
   try {
     const playlist = await Playlist.findById(id);
     if (!playlist) {
-      return res.status(404).json({ status: false, message: "Playlist not found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "Playlist not found" });
     }
     return res.status(200).json({
       status: true,
@@ -493,5 +493,40 @@ exports.fetchPlaylist = async (req, res) => {
   }
 };
 
+exports.updatePlaylist = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { playlist_title, playlist_description, price } = req.body;
 
+    // Ensure that the files for playlist_thumbnail and preview_video are provided
+    const playlistThumbnailLocation = req.files.playlist_thumbnail ? req.files.playlist_thumbnail[0].location : null;
+    
+    const previewVideoLocation = req.files.preview_video ? req.files.preview_video[0].location : null;
 
+    // Construct updateData object with the provided information
+    let updateData = {
+      ...(playlist_title && { playlist_title }),
+      ...(playlist_description && { playlist_description }),
+      ...(price && { price }),
+      ...(playlistThumbnailLocation && { playlist_thumbnail: playlistThumbnailLocation }),
+      ...(previewVideoLocation && { preview_video: previewVideoLocation }),
+    };
+
+    const updatedPlaylist = await Playlist.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+
+    if (!updatedPlaylist) {
+      return res.status(404).json({ status: false, message: "Playlist not found" });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "Playlist updated successfully",
+      data: updatedPlaylist,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
