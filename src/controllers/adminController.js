@@ -124,7 +124,8 @@ exports.getSubscriberDetails = async (req, res) => {
       phone: user.phone,
       isBlocked: user.isBlocked,
       isDeleted: user.isDeleted,
-      profile_pic: user.profile_pic
+      profile_pic: user.profile_pic,
+      isVerified: user.isVerified
     }));
 
     res.status(200).json({
@@ -517,29 +518,56 @@ exports.fetchVideosByCourseId = async (req, res) => {
   }
 };
 
-// exports.fetchProfilePic = async (req, res) => {
-//   try {
-//     const { userId } = req.params;
+exports.verifyCreator = async (req, res) => {
+  try {
+    const { id } = req.params;
 
-//     const user = await User.findById(userId);
+    const updatedCreator = await Creator.findByIdAndUpdate(
+      id,
+      { isVerified: true },
+      { new: true }
+    );
 
-//     if (!user) {
-//       return res.status(404).json({ status: false, message: "User not found" });
-//     }
+    if (!updatedCreator) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Creator not found" });
+    }
 
-//     if (!user.profile_pic) {
-//       return res
-//         .status(404)
-//         .json({ status: false, message: "Profile picture not found" });
-//     }
+    return res.status(200).json({
+      status: true,
+      message: "Creator verified successfully",
+      data: updatedCreator,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
 
-//     return res.json({
-//       status: true,
-//       message: "Profile picture fetched successfully",
-//       profilePicUrl: user.profile_pic,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ status: false, message: "Internal server error" });
-//   }
-// };
+exports.verifySubscriber = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updatedSubscriber = await User.findOneAndUpdate(
+      { _id: id, isSubscriber: true },
+      { isVerified: true },
+      { new: true }
+    );
+
+    if (!updatedSubscriber) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Subscriber not found" });
+    }
+
+    return res.status(200).json({
+      status: true,
+      message: "Subscriber verified successfully",
+      data: updatedSubscriber,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};

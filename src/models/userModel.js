@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema(
     joinDate: {
       type: Date,
     },
+    isVerified: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );
