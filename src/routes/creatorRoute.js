@@ -12,6 +12,7 @@ const {
   fetchMySubscribers,
   fetchPlaylist,
   updatePlaylist,
+  deletePlaylist,
 } = require("../controllers/creatorController");
 const upload = require("../utilis/aws");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
@@ -103,6 +104,13 @@ router.put(
   isAuthenticated,
   authorizeRole(["creator"]),
   updatePlaylist
+);
+
+router.delete(
+  "/delete-playlist/:id",
+  isAuthenticated,
+  authorizeRole(["creator"]),
+  deletePlaylist
 );
 
 module.exports = router;

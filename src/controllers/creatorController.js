@@ -529,3 +529,22 @@ exports.updatePlaylist = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
+exports.deletePlaylist = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedPlaylist = await Playlist.findByIdAndDelete(id);
+
+    if (!deletedPlaylist) {
+      return res.status(404).json({ status: false, message: "Playlist not found" });
+    }
+
+    res.status(200).json({ status: true, message: "Playlist deleted successfully" });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
