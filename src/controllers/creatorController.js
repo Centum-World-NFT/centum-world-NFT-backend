@@ -495,8 +495,7 @@ exports.fetchPlaylist = async (req, res) => {
 
 exports.updatePlaylist = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { playlist_title, playlist_description, price } = req.body;
+    const { playlist_title, playlist_description, price, id } = req.body;
 
     // Ensure that the files for playlist_thumbnail and preview_video are provided
     const playlistThumbnailLocation = req.files.playlist_thumbnail ? req.files.playlist_thumbnail[0].location : null;

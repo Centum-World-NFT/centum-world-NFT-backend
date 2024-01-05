@@ -98,7 +98,7 @@ router.get(
 );
 //update specific playlist
 router.put(
-  "/update-playlist/:id",
+  "/update-playlist",
   upload.fields([{ name: "preview_video" }, { name: "playlist_thumbnail" }]),
   isAuthenticated,
   authorizeRole(["creator"]),
