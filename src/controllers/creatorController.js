@@ -498,16 +498,22 @@ exports.updatePlaylist = async (req, res) => {
     const { playlist_title, playlist_description, price, id } = req.body;
 
     // Ensure that the files for playlist_thumbnail and preview_video are provided
-    const playlistThumbnailLocation = req.files.playlist_thumbnail ? req.files.playlist_thumbnail[0].location : null;
-    
-    const previewVideoLocation = req.files.preview_video ? req.files.preview_video[0].location : null;
+    const playlistThumbnailLocation = req.files.playlist_thumbnail
+      ? req.files.playlist_thumbnail[0].location
+      : null;
+
+    const previewVideoLocation = req.files.preview_video
+      ? req.files.preview_video[0].location
+      : null;
 
     // Construct updateData object with the provided information
     let updateData = {
       ...(playlist_title && { playlist_title }),
       ...(playlist_description && { playlist_description }),
       ...(price && { price }),
-      ...(playlistThumbnailLocation && { playlist_thumbnail: playlistThumbnailLocation }),
+      ...(playlistThumbnailLocation && {
+        playlist_thumbnail: playlistThumbnailLocation,
+      }),
       ...(previewVideoLocation && { preview_video: previewVideoLocation }),
     };
 
@@ -516,7 +522,9 @@ exports.updatePlaylist = async (req, res) => {
     });
 
     if (!updatedPlaylist) {
-      return res.status(404).json({ status: false, message: "Playlist not found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "Playlist not found" });
     }
 
     res.status(200).json({
@@ -537,14 +545,48 @@ exports.deletePlaylist = async (req, res) => {
     const deletedPlaylist = await Playlist.findByIdAndDelete(id);
 
     if (!deletedPlaylist) {
-      return res.status(404).json({ status: false, message: "Playlist not found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "Playlist not found" });
     }
 
-    res.status(200).json({ status: true, message: "Playlist deleted successfully" });
-
+    res
+      .status(200)
+      .json({ status: true, message: "Playlist deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+exports.totalNoOfPlaylistsSubscribersRevenue = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    console.log(userId);
+    const playlists = await Playlist.find({ creatorId: userId });
+    const playlistsCount = playlists.length;
 
+    const subscribers = await MyCourse.find({ creatorId: userId });
+
+    const subscribersCount = subscribers.length;
+
+    let totalRevenue = 0;
+    subscribers.forEach((subscriber) => {
+      totalRevenue += subscriber.price;
+    });
+
+    res.status(200).json({
+      status: true,
+      data: {
+        playlistsCount,
+        subscribersCount,
+        totalRevenue,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: false,
+      message: "Internal server error",
+    });
+  }
+};
