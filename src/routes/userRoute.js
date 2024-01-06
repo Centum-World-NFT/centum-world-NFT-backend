@@ -72,7 +72,7 @@ router.put(
 
 // get user details
 
-router.post("/get-user", isAuthenticated, authorizeRole(["user"]), getUser);
+router.post("/get-user", isAuthenticated, authorizeRole(["user", "creator"]), getUser);
 
 //get user transaction history details
 router.get("/fetch-transaction-history",
