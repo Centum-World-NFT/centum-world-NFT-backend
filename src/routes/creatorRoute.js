@@ -14,6 +14,7 @@ const {
   updatePlaylist,
   deletePlaylist,
   totalNoOfPlaylistsSubscribersRevenue,
+  bestCourseOfCreator,
 } = require("../controllers/creatorController");
 const upload = require("../utilis/aws");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
@@ -120,5 +121,14 @@ router.get(
   authorizeRole(["creator"]),
   totalNoOfPlaylistsSubscribersRevenue
 );
+
+router.get(
+  "/best-course-of-creator",
+  isAuthenticated,
+  authorizeRole(["creator"]),
+  bestCourseOfCreator
+);
+
+
 
 module.exports = router;

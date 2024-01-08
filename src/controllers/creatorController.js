@@ -4,6 +4,7 @@ const Subscriber = require("../models/subscriberModel");
 const Playlist = require("../models/playlistModel");
 const Video = require("../models/videoModel");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 
 const {
   validateName,
@@ -558,10 +559,12 @@ exports.deletePlaylist = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
 exports.totalNoOfPlaylistsSubscribersRevenue = async (req, res) => {
   try {
     const { userId } = req.user;
     console.log(userId);
+
     const playlists = await Playlist.find({ creatorId: userId });
     const playlistsCount = playlists.length;
 
@@ -581,6 +584,44 @@ exports.totalNoOfPlaylistsSubscribersRevenue = async (req, res) => {
         subscribersCount,
         totalRevenue,
       },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+exports.bestCourseOfCreator = async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const creatorId = new mongoose.Types.ObjectId(userId);
+
+    const mostPurchased = await MyCourse.aggregate([
+      { $match: { creatorId: creatorId } },
+      { $group: { _id: "$course_id", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ]);
+
+    console.log(mostPurchased, 609);
+
+    if (mostPurchased.length === 0) {
+      return res.status(404).json({
+        status: false,
+        message: "No courses found for this creator",
+      });
+    }
+
+    const courseDetails = await MyCourse.findOne({
+      course_id: mostPurchased[0]._id,
+    });
+
+    res.status(200).json({
+      status: true,
+      data: courseDetails,
     });
   } catch (error) {
     console.error(error);
