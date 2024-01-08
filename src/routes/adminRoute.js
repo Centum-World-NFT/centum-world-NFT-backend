@@ -22,7 +22,8 @@ const {
   everyMonthNumberOfNewUsersAndNewSubscribers,
   fetchVideosByCourseId,
   verifyCreator,
-  verifySubscriber
+  verifySubscriber,
+  totalCourses
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchTransactionHistory } = require("../controllers/userController");
@@ -181,6 +182,13 @@ router.put(
   isAuthenticated,
   authorizeRole(["admin"]),
   verifySubscriber
+)
+
+router.get(
+  "/total-courses",
+  isAuthenticated,
+  authorizeRole(["admin"]),
+  totalCourses
 )
 
 

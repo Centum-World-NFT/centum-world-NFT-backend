@@ -571,3 +571,22 @@ exports.verifySubscriber = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
+exports.totalCourses = async (req, res) => {
+  try {
+    const coursesCount = await Playlist.find().count();
+    
+    res.status(200).json({
+      status: true,
+      data: {
+        totalCourses: coursesCount,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: false,
+      message: "Internal server error",
+    });
+  }
+};

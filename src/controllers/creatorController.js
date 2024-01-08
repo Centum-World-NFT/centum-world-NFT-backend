@@ -630,32 +630,40 @@ exports.bestCourseOfCreator = async (req, res) => {
   }
 };
 
+
+
 exports.getMonthlyRevenueAndSubscibersOfCreator = async (req, res) => {
   const { userId } = req.user;
 
   try {
-    const startOfMonth = new Date();
-    startOfMonth.setUTCDate(1, 0, 0, 0);
-
-    const endOfMonth = new Date();
-    endOfMonth.setUTCMonth(endOfMonth.getUTCMonth() + 1, 0, 23, 59, 59, 999);
 
     const monthlyData = await MyCourse.aggregate([
       {
         $match: {
           creatorId: new mongoose.Types.ObjectId(userId),
-          createdAt: { $gte: startOfMonth, $lte: endOfMonth },
         },
       },
       {
         $group: {
-          _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
           totalSubscribersCount: { $sum: 1 },
           totalRevenue: { $sum: "$price" },
         },
       },
       {
-        $sort: { _id: 1 },
+        $project: {
+          _id: 0,
+          year: "$_id.year",
+          month: "$_id.month",
+          totalSubscribersCount: 1,
+          totalRevenue: 1,
+        },
+      },
+      {
+        $sort: { year: 1, month: 1 },
       },
     ]);
 
@@ -671,3 +679,4 @@ exports.getMonthlyRevenueAndSubscibersOfCreator = async (req, res) => {
     });
   }
 };
+
