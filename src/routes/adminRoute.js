@@ -23,7 +23,8 @@ const {
   fetchVideosByCourseId,
   verifyCreator,
   verifySubscriber,
-  totalCourses
+  totalCourses,
+  mostPurchasedCourse
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchTransactionHistory } = require("../controllers/userController");
@@ -189,6 +190,13 @@ router.get(
   isAuthenticated,
   authorizeRole(["admin"]),
   totalCourses
+)
+
+router.get(
+  "/most-purchased-course",
+  isAuthenticated,
+  authorizeRole("admin"),
+  mostPurchasedCourse
 )
 
 

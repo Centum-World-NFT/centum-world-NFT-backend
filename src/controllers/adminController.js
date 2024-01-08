@@ -125,7 +125,7 @@ exports.getSubscriberDetails = async (req, res) => {
       isBlocked: user.isBlocked,
       isDeleted: user.isDeleted,
       profile_pic: user.profile_pic,
-      isVerified: user.isVerified
+      isVerified: user.isVerified,
     }));
 
     res.status(200).json({
@@ -575,12 +575,88 @@ exports.verifySubscriber = async (req, res) => {
 exports.totalCourses = async (req, res) => {
   try {
     const coursesCount = await Playlist.find().count();
-    
+
     res.status(200).json({
       status: true,
       data: {
         totalCourses: coursesCount,
       },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+exports.mostPurchasedCourse = async (req, res) => {
+  try {
+    // Getting the most-purchased course title name and the number of purchases
+    const mostPurchased = await MyCourse.aggregate([
+      {
+        $group: {
+          _id: "$title",
+          count: { $sum: 1 },
+          price: { $first: "$price" },
+          uniqueId: { $first: "$_id" },
+          creatorId: { $first: "$creatorId" },
+          courseId: { $first: "$course_id" },
+        },
+      },
+
+      {
+        $lookup: {
+          from: "creators",
+          localField: "creatorId",
+          foreignField: "_id",
+          as: "creatorInfo",
+        },
+      },
+      {
+        $unwind: "$creatorInfo",
+      },
+
+      {
+        $project: {
+          _id: 1,
+          count: 1,
+          price: 1,
+          creatorName: {
+            $concat: ["$creatorInfo.firstName", " ", "$creatorInfo.surName"],
+          },
+          uniqueId: 1,
+          courseId: 1,
+        },
+      },
+
+      {
+        $sort: { count: -1 },
+      },
+    ]);
+
+    const bestCourse = mostPurchased[0];
+
+    let rank = 0;
+
+    for (let i = 0; i < mostPurchased.length; i++) {
+      const currentCount = mostPurchased[i].count;
+      const prevCount = i > 0 ? mostPurchased[i - 1].count : 0;
+
+      console.log(currentCount, "hbhbhb");
+      console.log(prevCount, "======");
+
+      if (currentCount !== prevCount) {
+        rank = i + 1;
+      }
+    }
+
+    console.log(rank, "///////");
+
+    res.status(200).json({
+      status: true,
+      data: { mostPurchased, bestCourse, rank },
     });
   } catch (error) {
     console.error(error);

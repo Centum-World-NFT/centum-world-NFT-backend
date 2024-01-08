@@ -602,7 +602,7 @@ exports.bestCourseOfCreator = async (req, res) => {
 
     const mostPurchased = await MyCourse.aggregate([
       { $match: { creatorId: creatorId } },
-      { $group: { _id: "$course_id", count: { $sum: 1 } } },
+      { $group: { _id: "$title", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
     ]);
 
@@ -630,13 +630,10 @@ exports.bestCourseOfCreator = async (req, res) => {
   }
 };
 
-
-
 exports.getMonthlyRevenueAndSubscibersOfCreator = async (req, res) => {
   const { userId } = req.user;
 
   try {
-
     const monthlyData = await MyCourse.aggregate([
       {
         $match: {
@@ -679,4 +676,3 @@ exports.getMonthlyRevenueAndSubscibersOfCreator = async (req, res) => {
     });
   }
 };
-
