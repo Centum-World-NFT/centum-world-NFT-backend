@@ -615,9 +615,7 @@ exports.bestCourseOfCreator = async (req, res) => {
       });
     }
 
-    const courseDetails = await MyCourse.findOne({
-      course_id: mostPurchased[0]._id,
-    });
+    const courseDetails = mostPurchased[0]
 
     res.status(200).json({
       status: true,
@@ -631,3 +629,50 @@ exports.bestCourseOfCreator = async (req, res) => {
     });
   }
 };
+
+
+exports.getMonthlyRevenueAndSubscibersOfCreator = async(req, res) => {
+
+  const { userId } = req.user;
+
+  try {
+    const startOfMonth = new Date();
+    startOfMonth.setUTCDate(1, 0, 0, 0);
+  
+    const endOfMonth = new Date();
+    endOfMonth.setUTCMonth(endOfMonth.getUTCMonth() + 1, 0, 23, 59, 59, 999);
+  
+    const monthlySubscribers = await MyCourse.aggregate([
+      {
+        $match: {
+          creatorId:new mongoose.Types.ObjectId(userId),
+          createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+
+    // const monthlyRevenues
+  
+    res.status(200).json({
+      status: true,
+      data: monthlySubscribers,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: false,
+      message: "Internal server error",
+    });
+  }
+  
+}
