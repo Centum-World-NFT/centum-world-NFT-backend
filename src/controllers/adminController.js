@@ -603,6 +603,10 @@ exports.mostPurchasedCourse = async (req, res) => {
           uniqueId: { $first: "$_id" },
           creatorId: { $first: "$creatorId" },
           courseId: { $first: "$course_id" },
+          thumbnail: { $first: "$thumbnail"},
+          previewVideo: { $first: "$video"}
+
+
         },
       },
 
@@ -628,6 +632,8 @@ exports.mostPurchasedCourse = async (req, res) => {
           },
           uniqueId: 1,
           courseId: 1,
+          thumbnail: 1,
+          previewVideo: 1
         },
       },
 
@@ -640,23 +646,13 @@ exports.mostPurchasedCourse = async (req, res) => {
 
     let rank = 0;
 
-    for (let i = 0; i < mostPurchased.length; i++) {
-      const currentCount = mostPurchased[i].count;
-      const prevCount = i > 0 ? mostPurchased[i - 1].count : 0;
-
-      console.log(currentCount, "hbhbhb");
-      console.log(prevCount, "======");
-
-      if (currentCount !== prevCount) {
-        rank = i + 1;
-      }
-    }
-
-    console.log(rank, "///////");
+    mostPurchased.forEach((course, index) => {
+      course.rank = index + 1;
+    });
 
     res.status(200).json({
       status: true,
-      data: { mostPurchased, bestCourse, rank },
+      data: { mostPurchased, bestCourse },
     });
   } catch (error) {
     console.error(error);
