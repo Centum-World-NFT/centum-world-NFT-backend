@@ -18,22 +18,20 @@ exports.adminLogin = async (req, res) => {
     }
     const adminLogin = await Admin.findOne({ adminId: adminId });
 
-    //console.log(adminLogin);
     if (!adminLogin) {
       res.status(404).json({ message: "Invalid Credentials" });
     } else {
       if (password === adminLogin.password) {
         const token = jwt.sign(
-          { adminId: adminLogin._id, role: "admin" },
+          { userId: adminLogin._id, role: "admin" },
           process.env.JWT_SECRET,
           { expiresIn: "8h" }
         );
         const adminId = adminLogin.adminId;
-        // const referralId = adminLogin.referralId;
         res.status(201).json({
           message: "Admin Login Successfully",
           token: token,
-          adminId,
+          adminId: adminId, // Corrected from userId to adminId
           expires: new Date().getTime() + 60000,
         });
       } else {
@@ -44,6 +42,7 @@ exports.adminLogin = async (req, res) => {
     console.log(error);
   }
 };
+
 
 //All user count
 
@@ -662,3 +661,5 @@ exports.mostPurchasedCourse = async (req, res) => {
     });
   }
 };
+
+

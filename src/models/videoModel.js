@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const videoSchema = new mongoose.Schema({
   title: {
@@ -6,7 +6,7 @@ const videoSchema = new mongoose.Schema({
     required: true,
   },
   video: {
-    type: String, 
+    type: String,
     required: true,
   },
   thumbnail: {
@@ -14,7 +14,7 @@ const videoSchema = new mongoose.Schema({
     required: true,
   },
   pdf: {
-    type: String, 
+    type: String,
     required: true,
   },
   description: {
@@ -28,14 +28,27 @@ const videoSchema = new mongoose.Schema({
   },
   isSelected: {
     type: Boolean,
-    default: false
+    default: false,
   },
   course_id: {
-    type:String,
+    type: String,
     required: true,
   },
+  likes: {
+    type:[ String],
+    default: [],
+  },
+  dislikes: {
+    type: [String],
+    default: [],
+  },
+  comments: [
+    {
+      type: String,
+    },
+  ],
 });
 
-const video = mongoose.model('video', videoSchema);
+const video = mongoose.model("video", videoSchema);
 
 module.exports = video;

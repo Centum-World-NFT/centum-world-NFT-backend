@@ -1,9 +1,12 @@
 const Playlist = require("../models/playlistModel");
 const Video = require("../models/videoModel");
+const Comment = require("../models/commentModel");
+const User = require("../models/userModel")
+const Creator = require("../models/creatorModel")
 
 exports.uploadVideo = async (req, res) => {
   try {
-    const { title, description , creatorId, key , course_id} = req.body;
+    const { title, description, creatorId, key, course_id } = req.body;
 
     if (!req.files["video"]) {
       return res.status(400).json({ message: "Video file is missing." });
@@ -25,10 +28,12 @@ exports.uploadVideo = async (req, res) => {
     const pdfFileLocation = req.files["pdf"][0].location;
     console.log("========>", pdfFileLocation);
 
-    const existingCourseIdInPlaylist = await Playlist.findOne({course_id})
+    const existingCourseIdInPlaylist = await Playlist.findOne({ course_id });
 
-    if(!existingCourseIdInPlaylist){
-      return res.status(400).json({status:false,message: "You are providing wrong course Id"})
+    if (!existingCourseIdInPlaylist) {
+      return res
+        .status(400)
+        .json({ status: false, message: "You are providing wrong course Id" });
     }
 
     // Create a new Video instance with correct values
@@ -40,7 +45,7 @@ exports.uploadVideo = async (req, res) => {
       description,
       creatorId,
       key,
-      course_id
+      course_id,
     });
 
     res.status(201).json({
@@ -80,18 +85,18 @@ exports.fetchVideo = async (req, res) => {
   }
 };
 
-
-
 exports.fetchOneCreatorVideos = async (req, res) => {
   try {
     const { id } = req.body; // Change 'creatorId' to 'id'
 
     // Find the video by ID in the database
-    const videos = await Video.find({creatorId:id}); // Use 'id' instead of 'creatorId'
+    const videos = await Video.find({ creatorId: id }); // Use 'id' instead of 'creatorId'
 
     // Check if the video with the given ID exists
     if (!videos) {
-      return res.status(404).json({ status: false, message: "Video not found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "Video not found" });
     }
 
     // Respond with the video data
@@ -111,20 +116,197 @@ exports.selectVideo = async (req, res) => {
     const { id } = req.body;
 
     const videoToSelect = await Video.findOneAndUpdate(
-     {_id: id},
+      { _id: id },
       { isSelected: true },
-      { new: true } 
+      { new: true }
     );
 
     if (!videoToSelect) {
-      return res.status(404).json({ status: false, message: "Video not found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "Video not found" });
     }
 
     // Respond with the updated video
-    res.status(200).json({ status: true, message: "Video selected", video: videoToSelect });
+    res
+      .status(200)
+      .json({ status: true, message: "Video selected", video: videoToSelect });
   } catch (error) {
     // Handle errors and send an appropriate response
     console.error(error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
+
+exports.likeVideo = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const { userId } = req.user;
+
+    console.log(userId);
+
+    const video = await Video.findById(videoId);
+
+    if (!video) {
+      return res.status(404).json({ error: "Video not found" });
+    }
+
+    // Check if the user has already liked the video
+    const hasLiked = video.likes.includes(userId);
+
+    if (hasLiked) {
+      // If the user has already liked, remove the like
+      video.likes.pull(userId);
+    } else {
+      // If the user hasn't liked, add the like
+      video.likes.push(userId);
+    }
+
+    // Save the updated video
+    const updatedVideo = await video.save();
+
+    return res.status(200).json({
+      message: hasLiked
+        ? "The like has been removed"
+        : "The video has been liked",
+      data: updatedVideo,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.dislikeVideo = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const { userId } = req.user;
+
+    const video = await Video.findByIdAndUpdate(
+      videoId,
+      {
+        $addToSet: { dislikes: userId },
+
+        $pull: { likes: userId },
+      },
+      { new: true }
+    );
+
+    if (!video) {
+      return res.status(404).json({ error: "Video not found" });
+    }
+
+    const hasDisliked = video.dislikes.includes(userId);
+    if (hasDisliked) {
+      // If the user has already liked, remove the like
+      video.dislikes.pull(userId);
+    } else {
+      // If the user hasn't liked, add the like
+      video.dislikes.push(userId);
+    }
+
+    const updatedVideo = await video.save();
+
+    return res.status(200).json({
+      message: hasDisliked
+        ? "The dislike has been removed"
+        : "The video has been disliked",
+      data: updatedVideo,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+//add a comment
+exports.addComment = async (req, res) => {
+  try {
+    const { videoId, text } = req.body;
+    const { userId } = req.user;
+
+    // Validate if videoId exists
+    const video = await Video.findById(videoId);
+    if (!video) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Video not found" });
+    }
+
+    // Get the user and their name
+    const user = (await User.findById(userId)) || (await Creator.findById(userId));
+    const nameOfUser = user ? user.firstName +" " + user.surName: "Unknown User"; // Default to "Unknown User" if user is not found
+
+    // Create a new comment with the user's name
+    const newComment = new Comment({
+      videoId,
+      userId,
+      text,
+      nameOfUser,
+    });
+
+    const savedComment = await newComment.save();
+
+    video.comments.push(savedComment);
+    await video.save();
+
+    // Modify the response to include the name property
+    const cleanedResponse = JSON.stringify(
+      {
+        status: true,
+        video,
+        data: { ...savedComment.toObject(), nameOfUser }, // Include the nameOfUser property
+      },
+      (key, value) =>
+        typeof value === "string" ? value.replace(/\n/g, "") : value
+    );
+
+    res.status(201).json(JSON.parse(cleanedResponse));
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+
+
+exports.addReplyToComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const { userId } = req.user;
+    const { text } = req.body;
+
+    const parentComment = await Comment.findById(commentId);
+    if (!parentComment) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Comment not found" });
+    }
+
+    const newReply = new Comment({
+      userId,
+      text,
+    });
+
+    const savedReply = await newReply.save();
+    parentComment.replies.push(savedReply);
+    await parentComment.save();
+
+    res.status(201).json({ status: true, data: savedReply });
+  } catch (error) {
+    console.error("Error adding reply:", error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+exports.getComments = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    const comments = await Comment.find({ videoId });
+    return res.status(200).json({ status: true, data: comments });
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    return res.status(500).json({ status: false, message: 'Internal Server Error' });
+  }
+};
+
