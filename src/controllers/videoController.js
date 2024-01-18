@@ -1,8 +1,8 @@
 const Playlist = require("../models/playlistModel");
 const Video = require("../models/videoModel");
 const Comment = require("../models/commentModel");
-const User = require("../models/userModel")
-const Creator = require("../models/creatorModel")
+const User = require("../models/userModel");
+const Creator = require("../models/creatorModel");
 
 exports.uploadVideo = async (req, res) => {
   try {
@@ -234,8 +234,11 @@ exports.addComment = async (req, res) => {
     }
 
     // Get the user and their name
-    const user = (await User.findById(userId)) || (await Creator.findById(userId));
-    const nameOfUser = user ? user.firstName +" " + user.surName: "Unknown User"; // Default to "Unknown User" if user is not found
+    const user =
+      (await User.findById(userId)) || (await Creator.findById(userId));
+    const nameOfUser = user
+      ? user.firstName + " " + user.surName
+      : "Unknown User"; // Default to "Unknown User" if user is not found
 
     // Create a new comment with the user's name
     const newComment = new Comment({
@@ -247,28 +250,16 @@ exports.addComment = async (req, res) => {
 
     const savedComment = await newComment.save();
 
-    video.comments.push(savedComment);
+    video.comments.push(userId);
     await video.save();
 
-    // Modify the response to include the name property
-    const cleanedResponse = JSON.stringify(
-      {
-        status: true,
-        video,
-        data: { ...savedComment.toObject(), nameOfUser }, // Include the nameOfUser property
-      },
-      (key, value) =>
-        typeof value === "string" ? value.replace(/\n/g, "") : value
-    );
 
-    res.status(201).json(JSON.parse(cleanedResponse));
+    res.status(201).json({status: true, data: savedComment});
   } catch (error) {
     console.error("Error adding comment:", error);
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
-
-
 
 exports.addReplyToComment = async (req, res) => {
   try {
@@ -305,8 +296,32 @@ exports.getComments = async (req, res) => {
     const comments = await Comment.find({ videoId });
     return res.status(200).json({ status: true, data: comments });
   } catch (error) {
-    console.error('Error fetching comments:', error);
-    return res.status(500).json({ status: false, message: 'Internal Server Error' });
+    console.error("Error fetching comments:", error);
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal Server Error" });
   }
 };
 
+
+
+exports.getReplies = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) {
+      return res.status(404).json({ status: false, message: "Comment not found" });
+    }
+
+    // Extract replies from the comment or set to an empty array if not present
+    const replies = comment.replies || [];
+
+    return res.status(200).json({ status: true, data: replies });
+  } catch (error) {
+    console.error("Error fetching replies:", error);
+
+    return res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};

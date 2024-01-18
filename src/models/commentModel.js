@@ -1,9 +1,22 @@
-// models/commentModel.js
-
 const mongoose = require("mongoose");
 
+const replySchema = new mongoose.Schema({
+  userId: {
+    type: String,
+  },
+  text: {
+    type: String,
+  },
+  replies: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  // ... other properties for a reply
+}, { timestamps: true });
+
 const commentSchema = new mongoose.Schema({
-  // Define your schema properties here
   videoId: {
     type: mongoose.Schema.ObjectId,
     ref: "Video",
@@ -15,15 +28,10 @@ const commentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  replies: [
-    {
-      type: String,
-      
-    },
-  ],
-  nameOfUser : {
-    type:String
-  }
+  replies: [replySchema], // Use the replySchema for the replies array
+  nameOfUser: {
+    type: String,
+  },
 }, { timestamps: true });
 
 const Comment = mongoose.model("Comment", commentSchema);

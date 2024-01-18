@@ -11,6 +11,7 @@ const {
   addComment,
   addReplyToComment,
   getComments,
+  getReplies,
 } = require("../controllers/videoController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchVideos } = require("../controllers/userController");
@@ -94,6 +95,13 @@ router.get(
   isAuthenticated,
   authorizeRole(["user", "admin", "creator"]),
   getComments
+);
+
+router.get(
+  "/get-replies/:commentId",
+  isAuthenticated,
+  authorizeRole(["user", "admin", "creator"]),
+  getReplies
 );
 
 module.exports = router;
