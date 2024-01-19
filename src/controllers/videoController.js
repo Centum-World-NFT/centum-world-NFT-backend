@@ -225,7 +225,6 @@ exports.addComment = async (req, res) => {
     const { videoId, text } = req.body;
     const { userId } = req.user;
 
-    // Validate if videoId exists
     const video = await Video.findById(videoId);
     if (!video) {
       return res
@@ -238,7 +237,7 @@ exports.addComment = async (req, res) => {
       (await User.findById(userId)) || (await Creator.findById(userId));
     const nameOfUser = user
       ? user.firstName + " " + user.surName
-      : "Unknown User"; // Default to "Unknown User" if user is not found
+      : "Unknown User";
 
     // Create a new comment with the user's name
     const newComment = new Comment({
@@ -253,8 +252,7 @@ exports.addComment = async (req, res) => {
     video.comments.push(userId);
     await video.save();
 
-
-    res.status(201).json({status: true, data: savedComment});
+    res.status(201).json({ status: true, data: savedComment });
   } catch (error) {
     console.error("Error adding comment:", error);
     res.status(500).json({ status: false, message: "Internal Server Error" });
@@ -273,10 +271,17 @@ exports.addReplyToComment = async (req, res) => {
         .status(404)
         .json({ status: false, message: "Comment not found" });
     }
+    // Get the user and their name
+    const user =
+      (await User.findById(userId)) || (await Creator.findById(userId));
+    const nameOfUser = user
+      ? user.firstName + " " + user.surName
+      : "Unknown User";
 
     const newReply = new Comment({
       userId,
       text,
+      nameOfUser,
     });
 
     const savedReply = await newReply.save();
@@ -303,8 +308,6 @@ exports.getComments = async (req, res) => {
   }
 };
 
-
-
 exports.getReplies = async (req, res) => {
   try {
     const { commentId } = req.params;
@@ -312,7 +315,9 @@ exports.getReplies = async (req, res) => {
     const comment = await Comment.findById(commentId);
 
     if (!comment) {
-      return res.status(404).json({ status: false, message: "Comment not found" });
+      return res
+        .status(404)
+        .json({ status: false, message: "Comment not found" });
     }
 
     // Extract replies from the comment or set to an empty array if not present
@@ -322,6 +327,8 @@ exports.getReplies = async (req, res) => {
   } catch (error) {
     console.error("Error fetching replies:", error);
 
-    return res.status(500).json({ status: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal Server Error" });
   }
 };

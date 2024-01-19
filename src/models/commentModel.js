@@ -13,6 +13,9 @@ const replySchema = new mongoose.Schema({
       ref: "Comment",
     },
   ],
+  nameOfUser: {
+    type: String
+  }
   // ... other properties for a reply
 }, { timestamps: true });
 
@@ -28,7 +31,7 @@ const commentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  replies: [replySchema], // Use the replySchema for the replies array
+  replies: [replySchema], 
   nameOfUser: {
     type: String,
   },
