@@ -27,7 +27,7 @@ exports.adminLogin = async (req, res) => {
           process.env.JWT_SECRET,
           { expiresIn: "8h" }
         );
-        const adminId = adminLogin.adminId;
+        const adminId = adminLogin._id;
         res.status(201).json({
           message: "Admin Login Successfully",
           token: token,

@@ -159,6 +159,7 @@ exports.likeVideo = async (req, res) => {
     } else {
       // If the user hasn't liked, add the like
       video.likes.push(userId);
+      video.dislikes.pull(userId)
     }
 
     // Save the updated video
@@ -181,14 +182,8 @@ exports.dislikeVideo = async (req, res) => {
     const { videoId } = req.params;
     const { userId } = req.user;
 
-    const video = await Video.findByIdAndUpdate(
+    const video = await Video.findById(
       videoId,
-      {
-        $addToSet: { dislikes: userId },
-
-        $pull: { likes: userId },
-      },
-      { new: true }
     );
 
     if (!video) {
@@ -202,6 +197,7 @@ exports.dislikeVideo = async (req, res) => {
     } else {
       // If the user hasn't liked, add the like
       video.dislikes.push(userId);
+      video.likes.pull(userId)
     }
 
     const updatedVideo = await video.save();

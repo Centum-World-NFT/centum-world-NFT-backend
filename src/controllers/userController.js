@@ -198,6 +198,7 @@ exports.userLogin = async (req, res) => {
         message: "Please provide email/phone  and password.",
       });
     }
+      
     const user = await User.findOne({
       $or: [{ email: emailorPhone }, { phone: emailorPhone }],
     });
