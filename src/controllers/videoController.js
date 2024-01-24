@@ -143,7 +143,6 @@ exports.likeVideo = async (req, res) => {
     const { videoId } = req.params;
     const { userId } = req.user;
 
-
     const video = await Video.findById(videoId);
 
     if (!video) {
@@ -159,7 +158,7 @@ exports.likeVideo = async (req, res) => {
     } else {
       // If the user hasn't liked, add the like
       video.likes.push(userId);
-      video.dislikes.pull(userId)
+      video.dislikes.pull(userId);
     }
 
     // Save the updated video
@@ -182,9 +181,7 @@ exports.dislikeVideo = async (req, res) => {
     const { videoId } = req.params;
     const { userId } = req.user;
 
-    const video = await Video.findById(
-      videoId,
-    );
+    const video = await Video.findById(videoId);
 
     if (!video) {
       return res.status(404).json({ error: "Video not found" });
@@ -197,7 +194,7 @@ exports.dislikeVideo = async (req, res) => {
     } else {
       // If the user hasn't liked, add the like
       video.dislikes.push(userId);
-      video.likes.pull(userId)
+      video.likes.pull(userId);
     }
 
     const updatedVideo = await video.save();
@@ -289,6 +286,102 @@ exports.addReplyToComment = async (req, res) => {
     res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
+exports.deleteComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+
+    if (!commentId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid commentId" });
+    }
+
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Comment not found" });
+    }
+
+    // Check if the user making the request is the owner of the comment
+    if (comment.userId !== req.user.userId) {
+      return res
+        .status(403)
+        .json({
+          status: false,
+          message: "You are not authorized to delete this comment",
+        });
+    }
+
+    const videoId = comment.videoId;
+
+    const video = await Video.findById(videoId);
+
+    if (video) {
+      video.comments.pull(req.user.userId);
+      await video.save();
+    }
+
+    const deletedComment = await Comment.findByIdAndDelete(commentId);
+
+    if (!deletedComment) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Comment not found" });
+    }
+
+    res
+      .status(200)
+      .json({ status: true, message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+exports.deleteReply = async (req, res) => {
+  try {
+    const { replyId } = req.params;
+
+    if (!replyId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid reply Id" });
+    }
+
+    // Use findByIdAndDelete to delete the reply
+    const deletedReply = await Comment.findOneAndUpdate(
+      { "replies._id": replyId },
+      { $pull: { replies: { _id: replyId } } },
+      { new: true }
+    );
+
+    if (!deletedReply) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Reply not found" });
+    }
+
+    // Check if the user making the request is the owner of the reply
+    if (deletedReply.userId !== req.user.userId) {
+      return res
+        .status(403)
+        .json({
+          status: false,
+          message: "You are not authorized to delete this reply",
+        });
+    }
+
+    res
+      .status(200)
+      .json({ status: true, message: "Reply deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting reply:", error);
+    res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
 
 exports.getComments = async (req, res) => {
   try {

@@ -8,38 +8,42 @@ const MyCourse = require("../models/myCourseModel");
 const Playlist = require("../models/playlistModel");
 const Video = require("../models/videoModel");
 
+
 exports.adminLogin = async (req, res) => {
   try {
     const { adminId, password } = req.body;
+
     if (!adminId || !password) {
-      return res
-        .status(422)
-        .json({ message: "Please fill credentials to login" });
+      return res.status(422).json({ status: false, message: "Please provide both adminId and password to login" });
     }
-    const adminLogin = await Admin.findOne({ adminId: adminId });
+
+    const adminLogin = await Admin.findOne({ adminId });
 
     if (!adminLogin) {
-      res.status(404).json({ message: "Invalid Credentials" });
+      return res.status(404).json({ status: false, message: "Invalid Credentials" });
+    }
+
+    const isPasswordValid = password === adminLogin.password;
+
+    if (isPasswordValid) {
+      const token = jwt.sign(
+        { userId: adminLogin._id, role: "admin" },
+        process.env.JWT_SECRET,
+        { expiresIn: "1m" }
+      );
+
+      res.status(201).json({
+        message: "Admin Login Successfully",
+        token,
+        adminId: adminLogin._id,
+        expires: new Date().getTime() + 60000,
+      });
     } else {
-      if (password === adminLogin.password) {
-        const token = jwt.sign(
-          { userId: adminLogin._id, role: "admin" },
-          process.env.JWT_SECRET,
-          { expiresIn: "8h" }
-        );
-        const adminId = adminLogin._id;
-        res.status(201).json({
-          message: "Admin Login Successfully",
-          token: token,
-          adminId: adminId, // Corrected from userId to adminId
-          expires: new Date().getTime() + 60000,
-        });
-      } else {
-        return res.status(404).json({ error: "Invalid Credentials" });
-      }
+      return res.status(401).json({ status: false, message: "Invalid Credentials" });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
 

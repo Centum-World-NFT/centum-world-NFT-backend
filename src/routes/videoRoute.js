@@ -12,6 +12,8 @@ const {
   addReplyToComment,
   getComments,
   getReplies,
+  deleteComment,
+  deleteReply,
 } = require("../controllers/videoController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchVideos } = require("../controllers/userController");
@@ -103,5 +105,10 @@ router.get(
   authorizeRole(["user", "admin", "creator"]),
   getReplies
 );
+
+router.delete("/delete-comment/:commentId",isAuthenticated, authorizeRole(["user", "admin", "creator"]), deleteComment)
+
+router.delete("/delete-reply/:replyId",isAuthenticated, authorizeRole(["user", "admin", "creator"]), deleteReply)
+
 
 module.exports = router;
