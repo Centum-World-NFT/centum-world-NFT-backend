@@ -289,6 +289,7 @@ exports.addReplyToComment = async (req, res) => {
 exports.deleteComment = async (req, res) => {
   try {
     const { commentId } = req.params;
+    console.log(commentId, 292)
 
     if (!commentId) {
       return res
@@ -364,14 +365,7 @@ exports.deleteReply = async (req, res) => {
     }
 
     // Check if the user making the request is the owner of the reply
-    if (deletedReply.userId !== req.user.userId) {
-      return res
-        .status(403)
-        .json({
-          status: false,
-          message: "You are not authorized to delete this reply",
-        });
-    }
+    
 
     res
       .status(200)
