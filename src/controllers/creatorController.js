@@ -606,7 +606,7 @@ exports.bestCourseOfCreator = async (req, res) => {
       { $sort: { count: -1 } },
     ]);
 
-    console.log(mostPurchased, 609);
+    // console.log(mostPurchased, 609);
 
     if (mostPurchased.length === 0) {
       return res.status(404).json({

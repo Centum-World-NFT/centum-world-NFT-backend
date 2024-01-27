@@ -49,4 +49,3 @@ const upload = multer({
 });
 
 module.exports = upload;
-// aws.js
