@@ -229,7 +229,7 @@ exports.addComment = async (req, res) => {
       (await User.findById(userId)) || (await Creator.findById(userId));
     const nameOfUser = user
       ? user.firstName + " " + user.surName
-      : "Unknown User";
+      : "Admin";
 
     // Create a new comment with the user's name
     const newComment = new Comment({
@@ -268,7 +268,7 @@ exports.addReplyToComment = async (req, res) => {
       (await User.findById(userId)) || (await Creator.findById(userId));
     const nameOfUser = user
       ? user.firstName + " " + user.surName
-      : "Unknown User";
+      : "Admin";
 
     const newReply = new Comment({
       userId,
@@ -363,8 +363,6 @@ exports.deleteReply = async (req, res) => {
         .status(404)
         .json({ status: false, message: "Reply not found" });
     }
-
-    // Check if the user making the request is the owner of the reply
     
 
     res

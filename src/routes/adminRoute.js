@@ -144,8 +144,6 @@ router.put(
 
 router.get(
   "/fetch-playlists",
-  isAuthenticated,
-  authorizeRole(["admin", "user"]),
   fetchPlaylists
 );
 
