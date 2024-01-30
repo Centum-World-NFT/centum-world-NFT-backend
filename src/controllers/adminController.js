@@ -341,7 +341,9 @@ exports.deleteUser = async (req, res) => {
 
 exports.fetchPlaylists = async (req, res) => {
   try {
-    const playlists = await Playlist.find();
+    const playlists = await Playlist.find().populate('creatorId');
+
+
 
     if (playlists.length === 0) {
       return res

@@ -24,7 +24,7 @@ const {
   verifyCreator,
   verifySubscriber,
   totalCourses,
-  mostPurchasedCourse
+  mostPurchasedCourse,
 } = require("../controllers/adminController");
 const { isAuthenticated, authorizeRole } = require("../middlewares/auth");
 const { fetchTransactionHistory } = require("../controllers/userController");
@@ -142,11 +142,7 @@ router.put(
   deleteUser
 );
 
-router.get(
-  "/fetch-playlists",
-  fetchPlaylists
-);
-
+router.get("/fetch-playlists", fetchPlaylists);
 
 router.get(
   "/fetch-subscriber-course/:id",
@@ -160,44 +156,41 @@ router.get(
   isAuthenticated,
   authorizeRole(["admin"]),
   everyMonthNumberOfNewUsersAndNewSubscribers
-)
+);
 
 router.get(
   "/fetch-videos-by-course-id/:id",
   isAuthenticated,
   authorizeRole(["admin", "creator"]),
   fetchVideosByCourseId
-)
+);
 
 router.put(
   "/verify-creator/:id",
   isAuthenticated,
   authorizeRole(["admin"]),
   verifyCreator
-)
+);
 
 router.put(
   "/verify-subscriber/:id",
   isAuthenticated,
   authorizeRole(["admin"]),
   verifySubscriber
-)
+);
 
 router.get(
   "/total-courses",
   isAuthenticated,
   authorizeRole(["admin"]),
   totalCourses
-)
+);
 
 router.get(
   "/most-purchased-course",
   isAuthenticated,
   authorizeRole("admin"),
   mostPurchasedCourse
-)
-
-
-
+);
 
 module.exports = router;
