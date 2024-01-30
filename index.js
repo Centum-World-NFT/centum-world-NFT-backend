@@ -2,18 +2,18 @@ const express = require('express');
 const colors = require('colors');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-const connectDB = require('./config/db.js');
+const connectDB = require('./src/config/db.js');
 const cors = require('cors');
 
 
 //routes
 
-const creatorRoute = require('./routes/creatorRoute.js')
-const videoRoute = require('./routes/videoRoute.js')
-const subscriberRoute = require('./routes/subscriberRoute.js')
-const userRoute = require('./routes/userRoute.js')
-const adminRoute = require('./routes/adminRoute.js')
-const paymentRoute = require('./routes/paymentRoute.js')
+const creatorRoute = require('./src/routes/creatorRoute.js')
+const videoRoute = require('./src/routes/videoRoute.js')
+const subscriberRoute = require('./src/routes/subscriberRoute.js')
+const userRoute = require('./src/routes/userRoute.js')
+const adminRoute = require('./src/routes/adminRoute.js')
+const paymentRoute = require('./src/routes/paymentRoute.js')
 dotenv.config({ path: './.env' });
 
 
