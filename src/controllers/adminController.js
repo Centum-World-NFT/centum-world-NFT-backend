@@ -8,19 +8,25 @@ const MyCourse = require("../models/myCourseModel");
 const Playlist = require("../models/playlistModel");
 const Video = require("../models/videoModel");
 
-
 exports.adminLogin = async (req, res) => {
   try {
     const { adminId, password } = req.body;
 
     if (!adminId || !password) {
-      return res.status(422).json({ status: false, message: "Please provide both adminId and password to login" });
+      return res
+        .status(422)
+        .json({
+          status: false,
+          message: "Please provide both adminId and password to login",
+        });
     }
 
     const adminLogin = await Admin.findOne({ adminId });
 
     if (!adminLogin) {
-      return res.status(404).json({ status: false, message: "Invalid Credentials" });
+      return res
+        .status(404)
+        .json({ status: false, message: "Invalid Credentials" });
     }
 
     const isPasswordValid = password === adminLogin.password;
@@ -39,14 +45,15 @@ exports.adminLogin = async (req, res) => {
         expires: new Date().getTime() + 60000,
       });
     } else {
-      return res.status(401).json({ status: false, message: "Invalid Credentials" });
+      return res
+        .status(401)
+        .json({ status: false, message: "Invalid Credentials" });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
-
 
 //All user count
 
@@ -341,9 +348,7 @@ exports.deleteUser = async (req, res) => {
 
 exports.fetchPlaylists = async (req, res) => {
   try {
-    const playlists = await Playlist.find().populate('creatorId');
-
-
+    const playlists = await Playlist.find().populate("creatorId");
 
     if (playlists.length === 0) {
       return res
@@ -608,10 +613,8 @@ exports.mostPurchasedCourse = async (req, res) => {
           uniqueId: { $first: "$_id" },
           creatorId: { $first: "$creatorId" },
           courseId: { $first: "$course_id" },
-          thumbnail: { $first: "$thumbnail"},
-          previewVideo: { $first: "$video"}
-
-
+          thumbnail: { $first: "$thumbnail" },
+          previewVideo: { $first: "$video" },
         },
       },
 
@@ -638,7 +641,7 @@ exports.mostPurchasedCourse = async (req, res) => {
           uniqueId: 1,
           courseId: 1,
           thumbnail: 1,
-          previewVideo: 1
+          previewVideo: 1,
         },
       },
 
@@ -667,5 +670,3 @@ exports.mostPurchasedCourse = async (req, res) => {
     });
   }
 };
-
-
